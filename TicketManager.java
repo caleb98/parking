@@ -44,7 +44,7 @@ public class TicketManager implements Hardware{
 
 			System.out.print("Enter Card Number: ");
 			String cardNumber = br.readLine();
-			card = Integer.parseInt(cardNumber);
+			cardNum = Integer.parseInt(cardNumber);
 			br.close();
 			isr.close();
 		}catch(IOException e){
@@ -62,7 +62,7 @@ public class TicketManager implements Hardware{
 		System.out.println("----------------------------------------");
 	}
 
-    public void PrintReceipt(Transcation transaction){
+    public void PrintReceipt(Transaction transaction){
 		System.out.println("----------------------------------------");
 		System.out.println("Transaction ID: " + transaction.transactionId);
 		System.out.println("Lot Used: " + transaction.lotUsed.getName());
@@ -78,20 +78,37 @@ public class TicketManager implements Hardware{
 		this.gateOpen = false;
 	}
 
+    /**
+     * Scans a ticket and returns the id listed on ticket. If
+     * an error occurs will return -1.
+     * @return ticket id; -1 if error
+     */
     public int scanTicket(){
-		int ticketId;
+		int ticketId = -1;
 		try{
 			InputStreamReader isr = new InputStreamReader(System.in);
 			BufferedReader br = new BufferedReader(isr);
 			System.out.print("Enter Ticket: ");
 			String card = br.readLine();
-			tickedId = Integer.parseInt(card);
+			ticketId = Integer.parseInt(card);
 			br.close();
 			isr.close();
 		}catch(IOException e){
 			e.printStackTrace();
 		}
 		return ticketId;
+	}
+
+	@Override
+	public void printTicket(Transaction transaction) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void printReceipt(Transaction completed) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
