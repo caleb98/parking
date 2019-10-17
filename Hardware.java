@@ -1,4 +1,3 @@
-
 public interface Hardware {
 
 	//Scanning functions
@@ -22,7 +21,7 @@ public interface Hardware {
 	 * Prints a parking ticket for a customer to keep until 
 	 * their departure.
 	 */
-	public void printTicket();
+	public void printTicket(Transaction transaction);
 	/**
 	 * Prints a receipt for a completed transaction.
 	 */
