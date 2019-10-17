@@ -27,4 +27,8 @@ public class LotSection {
 		occupiedSpots++;
 	}
 
+	public String getName(){
+		return this.name;
+	}
+
 }
