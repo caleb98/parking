@@ -33,41 +33,35 @@ public class TicketManager implements Hardware{
 	}
 
 	public Card scanCard(){
-		String name;
-		int cardNum;
-		int ssn;
-		String experiationDate;
+		String name = "";
+		int cardNum = 0;
+		int ssn = 0;
+		String experiationDate = "";
 		try{
 			InputStreamReader isr = new InputStreamReader(System.in);
 			BufferedReader br = new BufferedReader(isr);
 			System.out.print("Enter your name: ");
-
+			name = br.readLine();
 			System.out.print("Enter Card Number: ");
 			String cardNumber = br.readLine();
 			cardNum = Integer.parseInt(cardNumber);
+			System.out.print("Enter SSN of Card: ");
+			ssn = Integer.parseInt(br.readLine());
+			System.out.print("Enter experiation date: ");
+			experiationDate = br.readLine();
 			br.close();
-			isr.close();
 		}catch(IOException e){
 			e.printStackTrace();
 		}
-
-		return null;
+		Card card = new Card(name, cardNum, experiationDate, ssn);
+		//check card
+		//start transaction
+		//startTransaction(transaction);
+		return card;
 	}
 
-    public void PrintTicket(Transaction transaction){
-		System.out.println("----------------------------------------");
-		System.out.println("Transaction ID: " + transaction.transactionId);
-		System.out.println("Lot Assigned: " + transaction.lotUsed.getName());
-		System.out.println("Time Assigned: " + transaction.timeCreated);
-		System.out.println("----------------------------------------");
-	}
 
     public void PrintReceipt(Transaction transaction){
-		System.out.println("----------------------------------------");
-		System.out.println("Transaction ID: " + transaction.transactionId);
-		System.out.println("Lot Used: " + transaction.lotUsed.getName());
-		System.out.println("Time Assigned: " + transaction.timeCreated);
-		System.out.println("----------------------------------------");
 	}
 
     public void setGateOpen(){
@@ -92,7 +86,6 @@ public class TicketManager implements Hardware{
 			String card = br.readLine();
 			ticketId = Integer.parseInt(card);
 			br.close();
-			isr.close();
 		}catch(IOException e){
 			e.printStackTrace();
 		}
@@ -101,14 +94,21 @@ public class TicketManager implements Hardware{
 
 	@Override
 	public void printTicket(Transaction transaction) {
-		// TODO Auto-generated method stub
+		System.out.println("----------------------------------------");
+		System.out.println("Transaction ID: " + transaction.transactionId);
+		System.out.println("Lot Assigned: " + transaction.lotUsed.getName());
+		System.out.println("Time Assigned: " + transaction.timeCreated);
+		System.out.println("----------------------------------------");
 		
 	}
 
 	@Override
 	public void printReceipt(Transaction completed) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("----------------------------------------");
+		System.out.println("Transaction ID: " + transaction.transactionId);
+		System.out.println("Lot Used: " + transaction.lotUsed.getName());
+		System.out.println("Time Assigned: " + transaction.timeCreated);
+		System.out.println("----------------------------------------");
 	}
 	
 }
