@@ -9,7 +9,7 @@ public class TicketManager implements Hardware{
 	
 	private boolean gateOpen = false;
 
-	private HashMap<Transaction, Card> outstandingTransactions;
+	private HashMap<Transaction, Card> outstandingTransactions = new HashMap<>();
 	private ArrayList<ParkingLot> lots = new ArrayList<ParkingLot>();
 	private ArrayList<Transaction> completedTransactions = new ArrayList<Transaction>();
 	
@@ -21,7 +21,16 @@ public class TicketManager implements Hardware{
 		return lots.remove(parkingLot);
 	}
 	
-	public boolean startTransaction(Transaction transaction) {
+	public boolean startTransaction(Card card) {
+		//get open lot, and check if valid
+		Lot lotsection = getOpenLotSection();
+		if(lot == null) return false;
+		// create new transaction
+		Transaction transaction = new Transaction(completedTransactions.size(), lot);
+		// fill lot section spot
+		transaction.lotUsed.fillSpot();
+		// add to outstanding transactions
+		outstandingTransactions.put(transaction, key);
 		return true;
 	}
 	
@@ -76,10 +85,12 @@ public class TicketManager implements Hardware{
 
     public void setGateOpen(){
 		this.gateOpen = true;
+		System.out.println("Gate is open");
 	}
 
     public void setGateClosed(){
 		this.gateOpen = false;
+		System.out.println("Gate is closed");
 	}
 
     /**
