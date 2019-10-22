@@ -3,21 +3,22 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class TicketManager implements Hardware{
 	
 	private boolean gateOpen = false;
 
-	private ParkingLot[] lots;
 	private HashMap<Transaction, Card> outstandingTransactions;
-	private ArrayList<Transaction> completedTransactions;
+	private ArrayList<ParkingLot> lots = new ArrayList<ParkingLot>();
+	private ArrayList<Transaction> completedTransactions = new ArrayList<Transaction>();
 	
 	public boolean addLot(ParkingLot parkingLot) {
-		return true;
+		return lots.add(parkingLot);
 	}
 	
 	public boolean removeLot(ParkingLot parkingLot) {
-		return true;
+		return lots.remove(parkingLot);
 	}
 	
 	public boolean startTransaction(Transaction transaction) {
@@ -29,7 +30,17 @@ public class TicketManager implements Hardware{
 	}
 
 	public LotSection getOpenLotSection(){
-		return null;
+		LotSection section = null;
+		//find open section from parking lots
+		for(int i = 0; i < lots.size(); i++){
+			//get open section
+			section = lots.get(i).getOpenLotSection();
+			//make sure it exists/isn't full
+			if(section != null){
+				break;
+			}
+		}
+		return section;
 	}
 
 	public Card scanCard(){
@@ -49,7 +60,6 @@ public class TicketManager implements Hardware{
 			ssn = Integer.parseInt(br.readLine());
 			System.out.print("Enter experiation date: ");
 			experiationDate = br.readLine();
-			br.close();
 		}catch(IOException e){
 			e.printStackTrace();
 		}
@@ -85,7 +95,6 @@ public class TicketManager implements Hardware{
 			System.out.print("Enter Ticket: ");
 			String card = br.readLine();
 			ticketId = Integer.parseInt(card);
-			br.close();
 		}catch(IOException e){
 			e.printStackTrace();
 		}
