@@ -16,6 +16,6 @@ public class Transaction {
 	// return the time difference of the transaction
 	// if timeEnded is not up, get the differnce from now
 	public long getTimeDifferenceInMS(){
-		return ((timeEndedInMS == 0) ? System.currentTimeMillis() : timeEndedinMS) - timeCreatedInMS;
+		return ((this.timeEndedInMS == 0) ? System.currentTimeMillis() : this.timeEndedInMS) - this.timeCreatedInMS;
 	}
 }
