@@ -27,7 +27,8 @@ public class TicketManager implements Hardware{
 		LotSection lotsection = getOpenLotSection();
 		if(lotsection == null) return false;
 		// create new transaction
-		Transaction transaction = new Transaction(completedTransactions.size(), lotsection);
+		Transaction transaction = new Transaction(
+			completedTransactions.size() + outstandingTransactions.size(), lotsection);
 		// fill lot section spot
 		transaction.lotUsed.fillSpot();
 		// add to outstanding transactions
@@ -52,6 +53,7 @@ public class TicketManager implements Hardware{
 		PaymentManager.subtractBalance(0, outstandingTransactions.get(transaction));
 		outstandingTransactions.remove(transaction);
 		transaction.timeEndedInMS = System.currentTimeMillis();
+		transaction.lotUsed.setOpen();
 		completedTransactions.add(transaction);
 		// print receipt
 		printReceipt(transaction);
