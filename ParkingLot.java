@@ -13,7 +13,7 @@ public class ParkingLot {
 		return false;
 	}
 
-	public LotSection getLotSection(){
+	public LotSection getOpenLotSection(){
 		return null;
 	}
 }
