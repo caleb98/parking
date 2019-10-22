@@ -24,15 +24,15 @@ public class TicketManager implements Hardware{
 	
 	public boolean startTransaction(Card card) {
 		//get open lot, and check if valid
-		Lot lotsection = getOpenLotSection();
-		if(lot == null) return false;
+		LotSection lotsection = getOpenLotSection();
+		if(lotsection == null) return false;
 		// create new transaction
-		Transaction transaction = new Transaction(completedTransactions.size(), lot);
+		Transaction transaction = new Transaction(completedTransactions.size(), lotsection);
 		// fill lot section spot
 		transaction.lotUsed.fillSpot();
 		// add to outstanding transactions
-		outstandingTransactions.put(transaction, key);
-		printTicket(transaction);
+		outstandingTransactions.put(transaction, card);
+		this.printTicket(transaction);
 		return true;
 	}
 	
@@ -131,17 +131,16 @@ public class TicketManager implements Hardware{
 		System.out.println("----------------------------------------");
 		System.out.println("Transaction ID: " + transaction.transactionId);
 		System.out.println("Lot Assigned: " + transaction.lotUsed.getName());
-		System.out.println("Time Assigned: " + transaction.timeCreated);
+		System.out.println("Time Assigned: " + transaction.timeCreatedInMS);
 		System.out.println("----------------------------------------");
-		
 	}
 
 	@Override
 	public void printReceipt(Transaction completed) {
 		System.out.println("----------------------------------------");
-		System.out.println("Transaction ID: " + transaction.transactionId);
-		System.out.println("Lot Used: " + transaction.lotUsed.getName());
-		System.out.println("Time Assigned: " + transaction.timeCreated);
+		System.out.println("Transaction ID: " + completed.transactionId);
+		System.out.println("Lot Used: " + completed.lotUsed.getName());
+		System.out.println("Time Used: " + completed.getTimeDifferenceInMS());
 		System.out.println("----------------------------------------");
 	}
 	
