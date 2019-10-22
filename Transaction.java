@@ -3,12 +3,12 @@ public class Transaction {
 
 	public final int transactionId;
 	public final LotSection lotUsed;
-	public final int timeCreated;
+	public final long timeCreatedInMS;
 	
-	public Transaction(int id, LotSection sectionUsed, int transactionTime) {
+	public Transaction(int id, LotSection sectionUsed) {
 		transactionId = id;
 		lotUsed = sectionUsed;
-		timeCreated = transactionTime;
+		timeCreatedInMS = System.currentTimeMillis();
 	}
 	
 }
