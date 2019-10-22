@@ -5,6 +5,10 @@ public class ParkingLot {
 	public LotSection[] lotArray;
 	public int lotId;
 
+	public ParkingLot(int lotId){
+		this.lotId = lotId;
+	}
+
 	public boolean addSection(LotSection lot){
 		return false;
 	}
