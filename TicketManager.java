@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 public class TicketManager implements Hardware{
 	
@@ -31,10 +32,29 @@ public class TicketManager implements Hardware{
 		transaction.lotUsed.fillSpot();
 		// add to outstanding transactions
 		outstandingTransactions.put(transaction, key);
+		printTicket(transaction);
 		return true;
 	}
 	
 	public boolean completeTransaction(int transactionId) {
+		// find transaction in outstanding transactions
+		Transaction transaction = null;
+		for(Map.Entry outTrans : outstandingTransactions.entrySet()){
+			Transaction key = (Transaction) outTrans.getKey();
+			if(key.transactionId == transactionId){
+				transaction = key;
+				break;
+			}
+		}
+		//could not find ticket
+		if(transaction == null) return false;
+		// close transaction and charge card
+		PaymentManager.subtractBalance(0, outstandingTransactions.get(transaction));
+		outstandingTransactions.remove(transaction);
+		transaction.timeEndedInMS = System.currentTimeMillis();
+		completedTransactions.add(transaction);
+		// print receipt
+		printReceipt(transaction);
 		return true;
 	}
 
@@ -73,14 +93,8 @@ public class TicketManager implements Hardware{
 			e.printStackTrace();
 		}
 		Card card = new Card(name, cardNum, experiationDate, ssn);
-		//check card
-		//start transaction
-		//startTransaction(transaction);
+		//TODO Validate Card
 		return card;
-	}
-
-
-    public void PrintReceipt(Transaction transaction){
 	}
 
     public void setGateOpen(){
@@ -103,7 +117,7 @@ public class TicketManager implements Hardware{
 		try{
 			InputStreamReader isr = new InputStreamReader(System.in);
 			BufferedReader br = new BufferedReader(isr);
-			System.out.print("Enter Ticket: ");
+			System.out.print("Enter Ticket ID: ");
 			String card = br.readLine();
 			ticketId = Integer.parseInt(card);
 		}catch(IOException e){
