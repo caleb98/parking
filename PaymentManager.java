@@ -9,7 +9,7 @@ public class PaymentManager {
 	 * @param card card to add money to
 	 * @return whether the addition was successful or not
 	 */
-	public static boolean addBalance(float amount, Card card) {
+	private static boolean addBalance(float amount, Card card) {
 		//Return true right now since we're just simulating
 		//the addition.
 		return true;
@@ -24,7 +24,8 @@ public class PaymentManager {
 	public static boolean subtractBalance(float amount, Card card) {
 		//Return true right now since we're just simulating
 		//the subtraction.
-		return true;
+
+		return addBalance(amount, null);
 	}
 	
 	/**
