@@ -76,7 +76,7 @@ public class TicketManager implements Hardware{
 
 	public Card scanCard(){
 		String name = "";
-		int cardNum = 0;
+		long cardNum = 0;
 		int ssn = 0;
 		String experationDate = "";
 		try{
@@ -86,7 +86,7 @@ public class TicketManager implements Hardware{
 			name = br.readLine();
 			System.out.print("Enter Card Number: ");
 			String cardNumber = br.readLine();
-			cardNum = Integer.parseInt(cardNumber);
+			cardNum = Long.parseLong(cardNumber);
 			System.out.print("Enter SSN of Card: ");
 			ssn = Integer.parseInt(br.readLine());
 			System.out.print("Enter experation date: ");
