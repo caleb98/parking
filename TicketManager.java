@@ -78,7 +78,7 @@ public class TicketManager implements Hardware{
 		String name = "";
 		int cardNum = 0;
 		int ssn = 0;
-		String experiationDate = "";
+		String experationDate = "";
 		try{
 			InputStreamReader isr = new InputStreamReader(System.in);
 			BufferedReader br = new BufferedReader(isr);
@@ -89,12 +89,12 @@ public class TicketManager implements Hardware{
 			cardNum = Integer.parseInt(cardNumber);
 			System.out.print("Enter SSN of Card: ");
 			ssn = Integer.parseInt(br.readLine());
-			System.out.print("Enter experiation date: ");
-			experiationDate = br.readLine();
+			System.out.print("Enter experation date: ");
+			experationDate = br.readLine();
 		}catch(IOException e){
 			e.printStackTrace();
 		}
-		Card card = new Card(name, cardNum, experiationDate, ssn);
+		Card card = new Card(name, cardNum, experationDate, ssn);
 		//TODO Validate Card
 		return card;
 	}
