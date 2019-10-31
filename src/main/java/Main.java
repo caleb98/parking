@@ -2,6 +2,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import data.ParkingLot;
+import data.TicketManager;
+import data.Card;
+
+
 public class Main {
 
     public static void main(String args[]){

@@ -1,3 +1,5 @@
+package data;
+
 public class Card {
 	
 	public final String name;

@@ -1,3 +1,5 @@
+package data;
+
 /**
  * Static class for payment related functions.
  */
