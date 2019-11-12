@@ -26,8 +26,7 @@ public class PaymentManager {
 	public static boolean subtractBalance(float amount, Card card) {
 		//Return true right now since we're just simulating
 		//the subtraction.
-
-		return addBalance(amount, null);
+		return addBalance(amount, card);
 	}
 	
 	/**
@@ -39,10 +38,10 @@ public class PaymentManager {
 	public static boolean checkCard(Card card) {
 		//TODO: sometimes this will need to return false so we can test error handling.
 		//Return true since this is just a simulation.
-		if(Card.cardNumber - 1000000000000000 < 0) || ((Card.securityCode.toString()).length() < 3)
+		if((card.cardNumber - 1000000000 < 0) || (String.valueOf(card.securityCode).length() < 3)) {
 			return false;
 		}//end if
-		else{
+		else {
 			return true;
 		}//end else
 	}
