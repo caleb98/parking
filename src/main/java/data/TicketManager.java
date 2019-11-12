@@ -65,7 +65,7 @@ public class TicketManager implements Hardware {
 		// Charge the balance to the card
 		//TODO: calculate amount to charge people for time parked.
 		PaymentManager.subtractBalance(0, card);
-		transaction.timeEndedInMS = System.currentTimeMillis();
+		transaction.timeExitedInMS = System.currentTimeMillis();
 		
 		// Remove the transaction from outstanding and insert it in the 
 		// completed transactions list, dumping card info.
@@ -164,7 +164,7 @@ public class TicketManager implements Hardware {
 		System.out.println("----------------------------------------");
 		System.out.println("Transaction ID: " + transaction.transactionId);
 		System.out.println("Lot Assigned: " + transaction.lotUsed.getName());
-		System.out.println("Time Assigned: " + transaction.timeCreatedInMS);
+		System.out.println("Time Assigned: " + transaction.timeEnteredInMS);
 		System.out.println("----------------------------------------");
 	}
 

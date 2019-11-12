@@ -13,7 +13,7 @@ public class Main {
     public static void main(String args[]){
     	//TEST
     	ProgramWindow win = new ProgramWindow();
-//    	
+    	
 //        ParkingLot parkingLot = new ParkingLot(1);
 //        parkingLot.addSection(new LotSection("A", 5));
 //
