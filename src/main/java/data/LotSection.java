@@ -12,18 +12,30 @@ public class LotSection {
 		name = sectionName;
 	}
 	
+	/**
+	 * @return the number of open spots in this lot
+	 */
 	public int getOpenSpots() {
 		return totalSpots - occupiedSpots;
 	}
 	
+	/**
+	 * @return whether or not this lot has at least 1 open spot
+	 */
 	public boolean hasOpenSpots() {
 		return getOpenSpots() != 0;
 	}
 	
+	/**
+	 * Opens a spot in this lot.
+	 */
 	public void setOpen() {
 		occupiedSpots--;
 	}
 	
+	/**
+	 * Fills a spot in this lot.
+	 */
 	public void fillSpot() {
 		occupiedSpots++;
 	}
