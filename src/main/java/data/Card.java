@@ -1,4 +1,4 @@
-package src.main.java.data;
+package data;
 
 /**
  * Represents a credit/debit card used for payment.

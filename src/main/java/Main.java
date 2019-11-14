@@ -1,14 +1,14 @@
-package src.main.java;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import src.main.java.data.Card;
-import src.main.java.data.LotSection;
-import src.main.java.data.ParkingLot;
-import src.main.java.data.TicketManager;
-import src.main.java.ui.ProgramWindow;
+import data.Card;
+import data.LotSection;
+import data.ParkingLot;
+import data.TicketManager;
+import ui.ProgramWindow;
 
 public class Main {
 

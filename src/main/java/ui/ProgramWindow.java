@@ -1,4 +1,4 @@
-package src.main.java.ui;
+package ui;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -21,10 +21,10 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import src.main.java.data.Card;
-import src.main.java.data.LotSection;
-import src.main.java.data.ParkingLot;
-import src.main.java.data.TicketManager;
+import data.Card;
+import data.LotSection;
+import data.ParkingLot;
+import data.TicketManager;
 
 public class ProgramWindow {
 
