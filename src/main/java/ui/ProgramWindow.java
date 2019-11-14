@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -37,7 +38,10 @@ public class ProgramWindow {
 	private JTextField newLotName;
 	private JButton newLotSubmit;
 	private JButton removeLotButton;
+	private JComboBox terminalSelectBox;
+	
 	private JTable activeLotsTable;
+	DefaultTableModel lotsModel;
 	
 	private JPanel addSectionPanel;
 	private JTextField newSectionName;
@@ -129,13 +133,33 @@ public class ProgramWindow {
 			}
 		});
 		
+		JPanel terminalSelectPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints termConstraints = new GridBagConstraints();
+		
+		JLabel terminalSelectLabel = new JLabel("Select Terminal: ");
+		termConstraints.gridx = 0;
+		termConstraints.gridy = 0;
+		terminalSelectPanel.add(terminalSelectLabel, termConstraints);
+		
+		terminalSelectBox = new JComboBox<String>(new String[]{"Parking Lot A", "Parking Lot B", "..."});
+		termConstraints.gridx = 1;
+		termConstraints.weightx = 1;
+		termConstraints.fill = GridBagConstraints.HORIZONTAL;
+		terminalSelectPanel.add(terminalSelectBox, termConstraints);
+		
+		addLotConstraints.gridy = 4;
+		addLotConstraints.gridx = 0;
+		addLotConstraints.gridwidth = 3;
+		addLotConstraints.fill = GridBagConstraints.HORIZONTAL;
+		addLotPanel.add(terminalSelectPanel, addLotConstraints);
+		
 		editConstraints.anchor = GridBagConstraints.PAGE_START;
 		editConstraints.fill = GridBagConstraints.HORIZONTAL;
 		editConstraints.insets = addPanelInsets;
 		editConstraints.weightx = 0.2;
 		editConstraints.gridx = 0;
 		editConstraints.gridy = 0;
-		editLotsPanel.add(addLotPanel, editConstraints);
+		editLotsPanel.add(addLotPanel, editConstraints);		
 		
 		addSectionPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints addSectionConstraints = new GridBagConstraints();
@@ -200,12 +224,14 @@ public class ProgramWindow {
 		editLotsPanel.add(addSectionPanel, editConstraints);
 		
 		activeLotsTable = new JTable();
-		DefaultTableModel model = new DefaultTableModel();
-		model.setColumnIdentifiers(new String[] {"ID", "Lot Name", "Sections", "Open Sections"});
+		lotsModel = new DefaultTableModel();
+		lotsModel.setColumnIdentifiers(new String[] {"ID", "Lot Name", "Sections", "Open Sections"});
 		
-		addLotToTableModel(model, ticketManager.getLots());
+		for(int i = 0; i < ticketManager.getLotSize(); i++) {
+			addLotToTableModel(lotsModel, ticketManager.getLots().get(i));
+		}
 		
-		activeLotsTable.setModel(model);
+		activeLotsTable.setModel(lotsModel);
 		
 		
 		activeLotsTable.setFillsViewportHeight(true);
@@ -350,12 +376,17 @@ public class ProgramWindow {
 	 */
 	private void addLotButtonPressed(ActionEvent e) {
 		String lotName = newLotName.getText();
+		if (lotName.length() == 0) return;
+		
 		int lotId = ticketManager.getLotSize();
 		
 		ParkingLot newLot = new ParkingLot(lotId, lotName);
 		
 		ticketManager.addLot(newLot);
 		
+		addLotToTableModel (lotsModel, newLot);
+		
+		newLotName.setText("");
 		
 	}
 	
@@ -400,27 +431,26 @@ public class ProgramWindow {
 		//TODO: implement this method
 	}
 	
-	private void addLotToTableModel (DefaultTableModel model, ArrayList<ParkingLot> list) {
+	private void addLotToTableModel (DefaultTableModel model, ParkingLot lot) {
         Object rowData[] = new Object[4];
         
-        for(int i = 0; i < list.size(); i++) {
-        	
-        	String sectionArrayString = "", openSectionArrayString = "";
-        	for (int j = 0; j < list.get(i).sections.size(); j++) {
-        		sectionArrayString += list.get(i).sections.get(j).getName() + (j < list.get(i).getSectionSize() - 1 ? ", " : "");
-        	}
-        	
-        	for (int j = 0; j < list.get(i).sections.size(); j++) {
-        		if (list.get(i).sections.get(j).hasOpenSpots())
-        			openSectionArrayString += list.get(i).sections.get(j).getName() + (j < list.get(i).getOpenSectionSize() - 1 ? ", " : "");
-        	}
-        	
-            rowData[0] = list.get(i).lotId;
-            rowData[1] = list.get(i).lotName;
-            rowData[2] = sectionArrayString;
-            rowData[3] = openSectionArrayString;
-            model.addRow(rowData);
+        
+        String sectionArrayString = "", openSectionArrayString = "";
+        for (int j = 0; j < lot.sections.size(); j++) {
+        	sectionArrayString += lot.sections.get(j).getName() + (j < lot.getSectionSize() - 1 ? ", " : "");
         }
-	}
+        
+        for (int j = 0; j < lot.sections.size(); j++) {
+        	if (lot.sections.get(j).hasOpenSpots())
+        		openSectionArrayString += lot.sections.get(j).getName() + (j < lot.getOpenSectionSize() - 1 ? ", " : "");
+        }
+        	
+        rowData[0] = lot.lotId;
+        rowData[1] = lot.lotName;
+        rowData[2] = sectionArrayString;
+        rowData[3] = openSectionArrayString;
+        model.addRow(rowData);
+    }
+	
 	
 }
