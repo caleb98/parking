@@ -1,4 +1,4 @@
-package data;
+package src.main.java.data;
 
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -7,9 +7,16 @@ public class ParkingLot {
 	
 	public ArrayList<LotSection> sections = new ArrayList<>();
 	public int lotId;
+	public String lotName;
 
 	public ParkingLot(int lotId){
 		this.lotId = lotId;
+		this.lotName = "";
+	}
+	
+	public ParkingLot(int lotId, String lotName){
+		this.lotId = lotId;
+		this.lotName = lotName;
 	}
 
 	public boolean addSection(LotSection section){
@@ -18,6 +25,20 @@ public class ParkingLot {
 
 	public boolean removeSection(LotSection section){
 		return sections.remove(section);
+	}
+	
+	public int getSectionSize () {
+		return sections.size();
+	}
+	
+	public int getOpenSectionSize() {
+		int size = 0;
+		for(int i = 0; i < sections.size(); i++){
+			if(sections.get(i).hasOpenSpots()){
+				size++;
+			}
+		}
+		return size;
 	}
 
 	public LotSection getOpenLotSection(){

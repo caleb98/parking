@@ -1,4 +1,4 @@
-package ui;
+package src.main.java.ui;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.swing.JButton;
@@ -17,6 +18,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
+import src.main.java.data.Card;
+import src.main.java.data.LotSection;
+import src.main.java.data.ParkingLot;
+import src.main.java.data.TicketManager;
 
 public class ProgramWindow {
 
@@ -49,7 +56,10 @@ public class ProgramWindow {
 	private JTable activeTransactions;
 	private JTable completedTransactions;
 	
-	public ProgramWindow() {
+	private TicketManager ticketManager;
+	
+	public ProgramWindow(TicketManager ticketManager) {
+		this.ticketManager = ticketManager;
 		
 		//Create the window frame
 		window = new JFrame("Parking Program");
@@ -189,7 +199,15 @@ public class ProgramWindow {
 		editConstraints.gridy = 1;
 		editLotsPanel.add(addSectionPanel, editConstraints);
 		
-		activeLotsTable = new JTable(new Object[][]{{0, "Lot A", 5, 5}}, new Object[]{"ID", "Lot Name", "Sections", "Open Sections"});
+		activeLotsTable = new JTable();
+		DefaultTableModel model = new DefaultTableModel();
+		model.setColumnIdentifiers(new String[] {"ID", "Lot Name", "Sections", "Open Sections"});
+		
+		addLotToTableModel(model, ticketManager.getLots());
+		
+		activeLotsTable.setModel(model);
+		
+		
 		activeLotsTable.setFillsViewportHeight(true);
 		editConstraints.anchor = GridBagConstraints.CENTER;
 		editConstraints.fill = GridBagConstraints.BOTH;
@@ -200,7 +218,7 @@ public class ProgramWindow {
 		editConstraints.gridy = 0;
 		editLotsPanel.add(new JScrollPane(activeLotsTable), editConstraints);
 		
-		lotSectionsTable = new JTable(new Object[][]{{0, "Section 1", 60, 60}}, new Object[]{"ID", "Section Name", "Total Spots", "Open Spots"});
+		lotSectionsTable = new JTable(new Object[][]{}, new Object[]{"ID", "Section Name", "Total Spots", "Open Spots"});
 		lotSectionsTable.setFillsViewportHeight(true);
 		editConstraints.gridx = 1;
 		editConstraints.gridy = 1;
@@ -274,6 +292,7 @@ public class ProgramWindow {
 		
 	}
 	
+	
 	/**
 	 * This method is called whenever the "Enter Lot" button on the
 	 * customer portal tab is clicked. It should begin the process
@@ -283,8 +302,25 @@ public class ProgramWindow {
 	 * should be displayed as appropriate.
 	 * @param e
 	 */
-	private void enterLotButtonPressed(ActionEvent e) {
-		//TODO: implement this method
+	private void enterLotButtonPressed(ActionEvent event) {
+		//LotSection lotSection = ticketManager.getOpenLotSection();
+		//lotSection.fillSpot();
+		
+		Card card = ticketManager.scanCard();
+        boolean success = ticketManager.startTransaction(card);
+        
+        if(success){
+            ticketManager.setGateOpen();
+            try{
+                Thread.sleep(5000);
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
+            ticketManager.setGateClosed();
+        }else{
+            System.out.println("An open spot could not be found!");
+        }
+		
 	}
 	
 	/**
@@ -295,8 +331,14 @@ public class ProgramWindow {
 	 * payment card, and printing the receipt.
 	 * @param e
 	 */
-	private void exitLotButtonPressed(ActionEvent e) {
-		//TODO: implement this method
+	private void exitLotButtonPressed(ActionEvent event) {
+		int ticketId = ticketManager.scanTicket();
+        boolean tranasctionComplete = ticketManager.completeTransaction(ticketId);
+        if(tranasctionComplete)
+            System.out.println("Transaction has been completed");
+        else
+            System.out.println("Transaction failed, check ticked id");
+		
 	}
 	
 	/**
@@ -307,7 +349,14 @@ public class ProgramWindow {
 	 * @param e
 	 */
 	private void addLotButtonPressed(ActionEvent e) {
-		//TODO: implement this method
+		String lotName = newLotName.getText();
+		int lotId = ticketManager.getLotSize();
+		
+		ParkingLot newLot = new ParkingLot(lotId, lotName);
+		
+		ticketManager.addLot(newLot);
+		
+		
 	}
 	
 	/**
@@ -349,6 +398,29 @@ public class ProgramWindow {
 	 */
 	private void removeLotSectionButtonPressed(ActionEvent e) {
 		//TODO: implement this method
+	}
+	
+	private void addLotToTableModel (DefaultTableModel model, ArrayList<ParkingLot> list) {
+        Object rowData[] = new Object[4];
+        
+        for(int i = 0; i < list.size(); i++) {
+        	
+        	String sectionArrayString = "", openSectionArrayString = "";
+        	for (int j = 0; j < list.get(i).sections.size(); j++) {
+        		sectionArrayString += list.get(i).sections.get(j).getName() + (j < list.get(i).getSectionSize() - 1 ? ", " : "");
+        	}
+        	
+        	for (int j = 0; j < list.get(i).sections.size(); j++) {
+        		if (list.get(i).sections.get(j).hasOpenSpots())
+        			openSectionArrayString += list.get(i).sections.get(j).getName() + (j < list.get(i).getOpenSectionSize() - 1 ? ", " : "");
+        	}
+        	
+            rowData[0] = list.get(i).lotId;
+            rowData[1] = list.get(i).lotName;
+            rowData[2] = sectionArrayString;
+            rowData[3] = openSectionArrayString;
+            model.addRow(rowData);
+        }
 	}
 	
 }

@@ -1,4 +1,4 @@
-package data;
+package src.main.java.data;
 
 public class LotSection {
 	
@@ -25,6 +25,7 @@ public class LotSection {
 	public boolean hasOpenSpots() {
 		return getOpenSpots() != 0;
 	}
+	
 	
 	/**
 	 * Opens a spot in this lot.

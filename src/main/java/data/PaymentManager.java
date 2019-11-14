@@ -1,4 +1,4 @@
-package data;
+package src.main.java.data;
 
 /**
  * Static class for payment related functions.

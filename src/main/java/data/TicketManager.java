@@ -1,4 +1,4 @@
-package data;
+package src.main.java.data;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -100,25 +100,41 @@ public class TicketManager implements Hardware {
 		
 		return section;
 	}
+	
+	public int getLotSize() {
+		return lots.size();
+	}
 
+	public ArrayList<ParkingLot> getLots () {
+		return lots;
+	}
+	
+	
+	
 	@Override
 	public Card scanCard(){
 		String name = "";
 		long cardNum = 0;
 		int ssn = 0;
 		String expirationDate = "";
+		
 		try{
 			InputStreamReader isr = new InputStreamReader(System.in);
 			BufferedReader br = new BufferedReader(isr);
+			
 			System.out.print("Enter your name: ");
 			name = br.readLine();
+			
 			System.out.print("Enter Card Number: ");
 			String cardNumber = br.readLine();
 			cardNum = Long.parseLong(cardNumber);
+			
 			System.out.print("Enter SSN of Card: ");
 			ssn = Integer.parseInt(br.readLine());
+			
 			System.out.print("Enter expiration date: ");
 			expirationDate = br.readLine();
+			
 		}catch(IOException e){
 			e.printStackTrace();
 		}
@@ -162,7 +178,7 @@ public class TicketManager implements Hardware {
 	@Override
 	public void printTicket(Transaction transaction) {
 		System.out.println("----------------------------------------");
-		System.out.println("Transaction ID: " + transaction.transactionId);
+		System.out.println("Ticket ID: " + transaction.transactionId);
 		System.out.println("Lot Assigned: " + transaction.lotUsed.getName());
 		System.out.println("Time Assigned: " + transaction.timeEnteredInMS);
 		System.out.println("----------------------------------------");
@@ -171,7 +187,7 @@ public class TicketManager implements Hardware {
 	@Override
 	public void printReceipt(Transaction completed) {
 		System.out.println("----------------------------------------");
-		System.out.println("Transaction ID: " + completed.transactionId);
+		System.out.println("Ticket ID: " + completed.transactionId);
 		System.out.println("Lot Used: " + completed.lotUsed.getName());
 		System.out.println("Time Used: " + completed.getTimeDifferenceInMS());
 		System.out.println("----------------------------------------");

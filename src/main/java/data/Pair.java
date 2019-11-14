@@ -1,4 +1,4 @@
-package data;
+package src.main.java.data;
 
 public class Pair<A, B> {
 
