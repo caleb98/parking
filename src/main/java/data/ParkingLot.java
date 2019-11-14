@@ -6,10 +6,12 @@ import java.util.Scanner;
 public class ParkingLot {
 	
 	public ArrayList<LotSection> sections = new ArrayList<>();
+	public int hourlyRate;
 	public int lotId;
 
-	public ParkingLot(int lotId){
+	public ParkingLot(int lotId, int hourlyRate){
 		this.lotId = lotId;
+		this.hourlyRate = hourlyRate;
 	}
 
 	public boolean addSection(LotSection section){

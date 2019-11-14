@@ -29,14 +29,20 @@ public class TicketManager implements Hardware {
 	 * @return true if the transaction was created and the customer may park; false otherwise
 	 */
 	public boolean startTransaction(Card card) {
+		//TODO: get the lot where the user is parking, for now we're just making it the 0th lot
+		int customerLotIndex = 0;
+		
 		//get open lot, and check if valid
-		LotSection lotsection = getOpenLotSection();
+		ParkingLot customerLot = lots.get(customerLotIndex);
+		LotSection lotsection = customerLot.getOpenLotSection();
 		if(lotsection == null) return false;
+		
 		// create new transaction
-		Transaction transaction = new Transaction(
-			completedTransactions.size() + outstandingTransactions.size(), lotsection);
+		Transaction transaction = new Transaction(completedTransactions.size() + outstandingTransactions.size(), customerLot.hourlyRate, lotsection);
+		
 		// fill lot section spot
 		transaction.lotUsed.fillSpot();
+		
 		// add to outstanding transactions
 		outstandingTransactions.put(transaction.transactionId, new Pair<>(transaction, card));
 		this.printTicket(transaction);
@@ -85,19 +91,8 @@ public class TicketManager implements Hardware {
 	 * customer could park.
 	 * @return a lot section with empty spots; null if all sections are full
 	 */
-	public LotSection getOpenLotSection(){
-		LotSection section = null;
-		
-		//Look through all parking lots
-		for(ParkingLot lot : lots) {
-			//Try to get an open section
-			section = lot.getOpenLotSection();
-			//Make sure it exists/isn't full
-			if(section != null){
-				break;
-			}
-		}
-		
+	public LotSection getOpenLotSection(int lotIndex){
+		LotSection section = lots.get(lotIndex).getOpenLotSection();		
 		return section;
 	}
 

@@ -6,15 +6,17 @@ public class Transaction {
 
 	public final int transactionId;
 	public final LotSection lotUsed;
+	public final float hourlyRate;
 	public final long timeEnteredInMS;
 	public final Date timeEnteredDate;
 	
 	public long timeExitedInMS = 0;
 	public Date timeExitedDate = null;
 	
-	public Transaction(int id, LotSection sectionUsed) {
+	public Transaction(int id, float rate, LotSection sectionUsed) {
 		transactionId = id;
 		lotUsed = sectionUsed;
+		hourlyRate = rate;
 		timeEnteredInMS = System.currentTimeMillis();
 		timeEnteredDate = new Date(timeEnteredInMS);
 	}
