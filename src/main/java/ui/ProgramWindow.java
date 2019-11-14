@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.Date;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,6 +31,8 @@ public class ProgramWindow {
 	private JTextField newLotName;
 	private JButton newLotSubmit;
 	private JButton removeLotButton;
+	private JComboBox terminalSelectBox;
+	
 	private JTable activeLotsTable;
 	
 	private JPanel addSectionPanel;
@@ -119,13 +122,33 @@ public class ProgramWindow {
 			}
 		});
 		
+		JPanel terminalSelectPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints termConstraints = new GridBagConstraints();
+		
+		JLabel terminalSelectLabel = new JLabel("Select Terminal: ");
+		termConstraints.gridx = 0;
+		termConstraints.gridy = 0;
+		terminalSelectPanel.add(terminalSelectLabel, termConstraints);
+		
+		terminalSelectBox = new JComboBox<String>(new String[]{"Parking Lot A", "Parking Lot B", "..."});
+		termConstraints.gridx = 1;
+		termConstraints.weightx = 1;
+		termConstraints.fill = GridBagConstraints.HORIZONTAL;
+		terminalSelectPanel.add(terminalSelectBox, termConstraints);
+		
+		addLotConstraints.gridy = 4;
+		addLotConstraints.gridx = 0;
+		addLotConstraints.gridwidth = 3;
+		addLotConstraints.fill = GridBagConstraints.HORIZONTAL;
+		addLotPanel.add(terminalSelectPanel, addLotConstraints);
+		
 		editConstraints.anchor = GridBagConstraints.PAGE_START;
 		editConstraints.fill = GridBagConstraints.HORIZONTAL;
 		editConstraints.insets = addPanelInsets;
 		editConstraints.weightx = 0.2;
 		editConstraints.gridx = 0;
 		editConstraints.gridy = 0;
-		editLotsPanel.add(addLotPanel, editConstraints);
+		editLotsPanel.add(addLotPanel, editConstraints);		
 		
 		addSectionPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints addSectionConstraints = new GridBagConstraints();
