@@ -30,7 +30,11 @@ public class ParkingLot {
 	}
 
 	public boolean removeSection(LotSection section) {
-		return sections.remove(section);
+		boolean success = sections.remove(section);
+		for(int i = 0; i < sections.size(); ++i) {
+			sections.get(i).setId(i);
+		}
+		return success;
 	}
 	
 	public int getSectionSize () {

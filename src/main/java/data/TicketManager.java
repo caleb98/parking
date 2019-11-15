@@ -20,10 +20,11 @@ public class TicketManager implements Hardware {
 	}
 	
 	public boolean removeLot(ParkingLot parkingLot) {
+		boolean success = lots.remove(parkingLot);
 		for(int i = 0; i < lots.size(); ++i) {
 			lots.get(i).lotId = i;
 		}
-		return lots.remove(parkingLot);
+		return success;
 	}
 	
 	public HashMap<Integer, Pair<Transaction, Card>> getOutstandingTransactions() {

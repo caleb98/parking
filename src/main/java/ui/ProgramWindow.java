@@ -24,6 +24,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 
 import data.Card;
+import data.LotSection;
 import data.Pair;
 import data.ParkingLot;
 import data.TicketManager;
