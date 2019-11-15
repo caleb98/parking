@@ -10,10 +10,13 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -389,11 +392,8 @@ public class ProgramWindow {
 	 * @param e
 	 */
 	private void enterLotButtonPressed(ActionEvent event) {
-		//LotSection lotSection = ticketManager.getOpenLotSection();
-		//lotSection.fillSpot();
-		
 		Card card = ticketManager.scanCard();
-        boolean success = ticketManager.startTransaction(card);
+        boolean success = ticketManager.startTransaction(card, terminalSelectBox.getSelectedIndex());
         
         if(success){
         	(new Thread(()->{
@@ -407,8 +407,13 @@ public class ProgramWindow {
         	})).start();
         }else{
             System.out.println("An open spot could not be found!");
+            JOptionPane.showMessageDialog(
+            		window, 
+            		"An open spot could not be found.", 
+            		"Lot Full", 
+            		JOptionPane.ERROR_MESSAGE
+            );
         }
-		
 	}
 	
 	/**
@@ -422,11 +427,24 @@ public class ProgramWindow {
 	private void exitLotButtonPressed(ActionEvent event) {
 		int ticketId = ticketManager.scanTicket();
         boolean tranasctionComplete = ticketManager.completeTransaction(ticketId);
-        if(tranasctionComplete)
+        if(tranasctionComplete) {
             System.out.println("Transaction has been completed");
-        else
+            JOptionPane.showMessageDialog(
+            		window, 
+            		"Transaction completed successfully.", 
+            		"Transaction Complete",
+            		JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+        else {
             System.out.println("Transaction failed, check ticked id");
-		
+            JOptionPane.showMessageDialog(
+            		window,
+            		"Transaction failed, check ticket ID.", 
+            		"Transaction Failed",
+            		JOptionPane.ERROR_MESSAGE
+            );
+        }
 	}
 	
 	/**
