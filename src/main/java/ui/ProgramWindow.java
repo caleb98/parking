@@ -501,12 +501,18 @@ public class ProgramWindow {
 		for (int i = 0; i < ticketManager.getLotSize(); i++) 
 			addLotToTableModel(lotsModel, ticketManager.getLots().get(i));
 		
-		
 		ParkingLot lotToShow;
 		if (activeLotsTable.getSelectedRow() > 0)
 			lotToShow = ticketManager.getLots().get(activeLotsTable.getSelectedRow());
-		else
+		else if (ticketManager.getLots().size() > 0)
 			lotToShow = ticketManager.getLots().get(0);
+		else {
+			clearTableModel(sectionsModel);
+			return;
+		}
+		
+		
+		
 		
 		clearTableModel(sectionsModel);
 		for (int i = 0; i < lotToShow.getSectionSize(); i++) 
@@ -525,7 +531,7 @@ public class ProgramWindow {
 	 * @param e
 	 */
 	private void removeLotSectionButtonPressed(ActionEvent e) {
-		sectionsModel.removeRow(lotSectionsTable.getSelectedRow());
+		
 		
 		
 		ParkingLot lotToShow;
@@ -539,6 +545,7 @@ public class ProgramWindow {
 		}
 		
 		ticketManager.getLots().get(lotIndex).removeSection(lotToShow.sections.get(lotSectionsTable.getSelectedRow()));
+		sectionsModel.removeRow(lotSectionsTable.getSelectedRow());
 		
 		clearTableModel(sectionsModel);
 		for (int i = 0; i < lotToShow.getSectionSize(); i++) 
