@@ -22,6 +22,7 @@ public class ParkingLot {
 	}
 
 	public boolean addSection(LotSection section){
+		section.setId(this.getSectionSize());
 		return sections.add(section);
 	}
 

@@ -4,6 +4,8 @@ public class LotSection {
 	
 	private int totalSpots;
 	private int occupiedSpots;
+	
+	private int sectionId;
 	private String name;
 	
 	public LotSection(String sectionName, int maxSpots) {
@@ -26,12 +28,20 @@ public class LotSection {
 		return getOpenSpots() != 0;
 	}
 	
+	public int getTotalSpots() {
+		return totalSpots;
+	}
+	
 	
 	/**
 	 * Opens a spot in this lot.
 	 */
 	public void setOpen() {
 		occupiedSpots--;
+	}
+	
+	public void setId(int id) {
+		this.sectionId = id;
 	}
 	
 	/**
@@ -43,6 +53,10 @@ public class LotSection {
 
 	public String getName(){
 		return this.name;
+	}
+	
+	public int getId() {
+		return sectionId;
 	}
 
 }

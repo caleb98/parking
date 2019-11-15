@@ -42,6 +42,7 @@ public class ProgramWindow {
 	
 	private JTable activeLotsTable;
 	DefaultTableModel lotsModel;
+	DefaultTableModel sectionsModel;
 	
 	private JPanel addSectionPanel;
 	private JTextField newSectionName;
@@ -212,7 +213,7 @@ public class ProgramWindow {
 		addSectionConstraints.gridy = 4;
 		addSectionConstraints.insets = new Insets(25, 0, 0, 0);
 		addSectionPanel.add(removeSectionButton, addSectionConstraints);
-		removeLotButton.addActionListener(new ActionListener() {
+		removeSectionButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				removeLotSectionButtonPressed(e);
@@ -225,7 +226,7 @@ public class ProgramWindow {
 		
 		activeLotsTable = new JTable();
 		lotsModel = new DefaultTableModel();
-		lotsModel.setColumnIdentifiers(new String[] {"ID", "Lot Name", "Sections", "Open Sections"});
+		lotsModel.setColumnIdentifiers(new String[] {"ID", "Lot Name", "Sections", "Open Sections", "Hourly Rate"});
 		
 		for(int i = 0; i < ticketManager.getLotSize(); i++) {
 			addLotToTableModel(lotsModel, ticketManager.getLots().get(i));
@@ -244,7 +245,16 @@ public class ProgramWindow {
 		editConstraints.gridy = 0;
 		editLotsPanel.add(new JScrollPane(activeLotsTable), editConstraints);
 		
-		lotSectionsTable = new JTable(new Object[][]{}, new Object[]{"ID", "Section Name", "Total Spots", "Open Spots"});
+		lotSectionsTable = new JTable();
+		sectionsModel = new DefaultTableModel();
+		sectionsModel.setColumnIdentifiers(new String[] {"ID", "Section Name", "Total Spots", "Open Spots"});
+		
+		for (int i = 0; i < ticketManager.getLots().get(0).getSectionSize(); i++) {
+			addSectionToTableModel(sectionsModel, ticketManager.getLots().get(0).sections.get(i));
+		}
+		
+		lotSectionsTable.setModel(sectionsModel);
+		
 		lotSectionsTable.setFillsViewportHeight(true);
 		editConstraints.gridx = 1;
 		editConstraints.gridy = 1;
@@ -414,7 +424,13 @@ public class ProgramWindow {
 	 * @param e
 	 */
 	private void removeLotButtonPressed(ActionEvent e) {
-		//TODO: implement this method
+		
+		ticketManager.removeLot(ticketManager.getLots().get(activeLotsTable.getSelectedRow()));
+		
+		clearTableModel(lotsModel);
+		for (int i = 0; i < ticketManager.getLotSize(); i++) 
+			addLotToTableModel(lotsModel, ticketManager.getLots().get(i));
+		
 	}
 	
 	/**
@@ -428,11 +444,16 @@ public class ProgramWindow {
 	 * @param e
 	 */
 	private void removeLotSectionButtonPressed(ActionEvent e) {
-		//TODO: implement this method
+		sectionsModel.removeRow(lotSectionsTable.getSelectedRow());
+		
+		clearTableModel(sectionsModel); // HOW DO I GET THE CURRENTLY DISPLAYED LIST OF SECTIONS TO REFRESH FROM
+		//for (int i = 0; i < ticketManager.getLotSize(); i++) 
+		//	addSectionToTableModel(lotsModel, ticketManager.getLots().get(i));
 	}
 	
+	
 	private void addLotToTableModel (DefaultTableModel model, ParkingLot lot) {
-        Object rowData[] = new Object[4];
+        Object rowData[] = new Object[5];
         
         
         String sectionArrayString = "", openSectionArrayString = "";
@@ -449,8 +470,26 @@ public class ProgramWindow {
         rowData[1] = lot.lotName;
         rowData[2] = sectionArrayString;
         rowData[3] = openSectionArrayString;
+        rowData[4] = lot.hourlyRate;
         model.addRow(rowData);
     }
 	
+	private void addSectionToTableModel(DefaultTableModel model, LotSection section) {
+		Object rowData[] = new Object[4];
+        
+        
+        String sectionArrayString = "", openSectionArrayString = "";
+        
+        	
+        rowData[0] = section.getId();
+        rowData[1] = section.getName();
+        rowData[2] = section.getTotalSpots();
+        rowData[3] = section.getOpenSpots();
+        model.addRow(rowData);
+	}
+	
+	private void clearTableModel(DefaultTableModel model) {
+		model.setRowCount(0);
+	}
 	
 }
