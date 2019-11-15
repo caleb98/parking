@@ -446,9 +446,9 @@ public class ProgramWindow {
 	private void removeLotSectionButtonPressed(ActionEvent e) {
 		sectionsModel.removeRow(lotSectionsTable.getSelectedRow());
 		
-		clearTableModel(sectionsModel); // HOW DO I GET THE CURRENTLY DISPLAYED LIST OF SECTIONS TO REFRESH FROM
-		//for (int i = 0; i < ticketManager.getLotSize(); i++) 
-		//	addSectionToTableModel(lotsModel, ticketManager.getLots().get(i));
+		clearTableModel(sectionsModel);
+		for (int i = 0; i < ticketManager.getLotSize(); i++) 
+			addSectionToTableModel(lotsModel, ticketManager.getLots().get(i));
 	}
 	
 	
