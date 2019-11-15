@@ -483,6 +483,17 @@ public class ProgramWindow {
 		for (int i = 0; i < ticketManager.getLotSize(); i++) 
 			addLotToTableModel(lotsModel, ticketManager.getLots().get(i));
 		
+		
+		ParkingLot lotToShow;
+		if (activeLotsTable.getSelectedRow() > 0)
+			lotToShow = ticketManager.getLots().get(activeLotsTable.getSelectedRow());
+		else
+			lotToShow = ticketManager.getLots().get(0);
+		
+		clearTableModel(sectionsModel);
+		for (int i = 0; i < lotToShow.getSectionSize(); i++) 
+			addSectionToTableModel(sectionsModel, lotToShow.sections.get(i));
+		
 	}
 	
 	/**
@@ -498,9 +509,23 @@ public class ProgramWindow {
 	private void removeLotSectionButtonPressed(ActionEvent e) {
 		sectionsModel.removeRow(lotSectionsTable.getSelectedRow());
 		
+		
+		ParkingLot lotToShow;
+		int lotIndex = 0;
+		
+		if (activeLotsTable.getSelectedRow() > 0) {
+			lotIndex = activeLotsTable.getSelectedRow();
+			lotToShow = ticketManager.getLots().get(activeLotsTable.getSelectedRow());
+		} else {
+			lotToShow = ticketManager.getLots().get(0);
+		}
+		
+		ticketManager.getLots().get(lotIndex).removeSection(lotToShow.sections.get(lotSectionsTable.getSelectedRow()));
+		
 		clearTableModel(sectionsModel);
-		for (int i = 0; i < ticketManager.getLotSize(); i++) 
-			addSectionToTableModel(lotsModel, ticketManager.getLots().get(i));
+		for (int i = 0; i < lotToShow.getSectionSize(); i++) 
+			addSectionToTableModel(sectionsModel, lotToShow.sections.get(i));
+		
 	}
 	
 	
@@ -528,9 +553,6 @@ public class ProgramWindow {
 	
 	private void addSectionToTableModel(DefaultTableModel model, LotSection section) {
 		Object rowData[] = new Object[4];
-        
-        
-        String sectionArrayString = "", openSectionArrayString = "";
         
         	
         rowData[0] = section.getId();
