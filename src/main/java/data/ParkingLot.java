@@ -1,31 +1,35 @@
 package data;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class ParkingLot {
 	
+	/**
+	 * The default hourly rate for a parking lot.
+	 */
+	private static final float DEFAULT_LOT_RATE = 100.00f;
+	
 	public ArrayList<LotSection> sections = new ArrayList<>();
-	public int hourlyRate;
+	public float hourlyRate;
 	public int lotId;
 	public String lotName;
-
-	public ParkingLot(int lotId, int hourlyRate){
-		this.lotId = lotId;
-		this.lotName = "";
+	
+	public ParkingLot(int lotId, String lotName) {
+		this(lotId, lotName, DEFAULT_LOT_RATE);
 	}
 	
-	public ParkingLot(int lotId, String lotName){
+	public ParkingLot(int lotId, String lotName, float rate) {
 		this.lotId = lotId;
 		this.lotName = lotName;
-		this.hourlyRate = hourlyRate;
+		hourlyRate = rate;
 	}
 
-	public boolean addSection(LotSection section){
+	public boolean addSection(LotSection section) {
+
 		return sections.add(section);
 	}
 
-	public boolean removeSection(LotSection section){
+	public boolean removeSection(LotSection section) {
 		return sections.remove(section);
 	}
 	

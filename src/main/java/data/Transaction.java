@@ -12,6 +12,7 @@ public class Transaction {
 	
 	public long timeExitedInMS = 0;
 	public Date timeExitedDate = null;
+	public float totalCost;
 	
 	public Transaction(int id, float rate, LotSection sectionUsed) {
 		transactionId = id;
@@ -24,6 +25,8 @@ public class Transaction {
 	public void closeTransaction() {
 		timeExitedInMS = System.currentTimeMillis();
 		timeExitedDate = new Date(timeExitedInMS);
+		
+		totalCost = (float) Math.ceil(((timeExitedInMS - timeEnteredInMS) / 1000f) / 60f) / 60f * hourlyRate;
 	}
 	
 	// return the time difference of the transaction

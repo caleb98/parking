@@ -15,11 +15,23 @@ public class TicketManager implements Hardware {
 	private ArrayList<Transaction> completedTransactions = new ArrayList<Transaction>();
 	
 	public boolean addLot(ParkingLot parkingLot) {
+		parkingLot.lotId = lots.size();
 		return lots.add(parkingLot);
 	}
 	
 	public boolean removeLot(ParkingLot parkingLot) {
+		for(int i = 0; i < lots.size(); ++i) {
+			lots.get(i).lotId = i;
+		}
 		return lots.remove(parkingLot);
+	}
+	
+	public HashMap<Integer, Pair<Transaction, Card>> getOutstandingTransactions() {
+		return outstandingTransactions;
+	}
+	
+	public ArrayList<Transaction> getCompletedTransactions() {
+		return completedTransactions;
 	}
 	
 	/**
@@ -77,6 +89,7 @@ public class TicketManager implements Hardware {
 		// completed transactions list, dumping card info.
 		outstandingTransactions.remove(transactionId);
 		completedTransactions.add(transaction);
+		transaction.closeTransaction();
 		
 		// Set an open spot in the lot where this customer was parked.
 		transaction.lotUsed.setOpen();

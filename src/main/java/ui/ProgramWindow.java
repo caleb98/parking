@@ -8,7 +8,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -19,12 +19,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 
 import data.Card;
-import data.LotSection;
+import data.Pair;
 import data.ParkingLot;
 import data.TicketManager;
+import data.Transaction;
 
 public class ProgramWindow {
 
@@ -38,7 +41,7 @@ public class ProgramWindow {
 	private JTextField newLotName;
 	private JButton newLotSubmit;
 	private JButton removeLotButton;
-	private JComboBox terminalSelectBox;
+	private JComboBox<String> terminalSelectBox;
 	
 	private JTable activeLotsTable;
 	DefaultTableModel lotsModel;
@@ -73,10 +76,21 @@ public class ProgramWindow {
 		editLotsPanel = new JPanel();
 		tabPane.addTab("Edit Lots", editLotsPanel);
 		customerPanel = new JPanel();
-		tabPane.addTab("Customer Portal", customerPanel);
+		tabPane.addTab("Customer Terminal", customerPanel);
 		transactionsPanel = new JPanel();
 		tabPane.addTab("Transaction Log", transactionsPanel);
 		window.add(tabPane);
+		
+		tabPane.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if(e.getSource() instanceof JTabbedPane) {
+					if(tabPane.getSelectedIndex() == 2) {
+						updateTransactionLogs();
+					}
+				}
+			}
+		});
 		
 		//Build the lot editing panel
 		editLotsPanel.setLayout(new GridBagLayout());
@@ -296,7 +310,10 @@ public class ProgramWindow {
 		transactionConstraints.insets = rightInsets;
 		transactionsPanel.add(completedTransactionsLabel, transactionConstraints);
 		
-		activeTransactions = new JTable(new Object[][]{{"0002", "Lot A", new Date()}}, new Object[]{"Transaction ID", "Lot Used", "Date"});
+		DefaultTableModel activeModel = new DefaultTableModel();
+		activeModel.setColumnIdentifiers(new String[]{"Transaction ID", "Lot Used", "Date"});
+		activeTransactions = new JTable();
+		activeTransactions.setModel(activeModel);
 		transactionConstraints.gridx = 0;
 		transactionConstraints.gridy = 1;
 		transactionConstraints.weighty = 1;
@@ -304,7 +321,10 @@ public class ProgramWindow {
 		transactionConstraints.fill = GridBagConstraints.BOTH;
 		transactionsPanel.add(new JScrollPane(activeTransactions), transactionConstraints);
 		
-		completedTransactions = new JTable(new Object[][]{{"0001", "Lot A", "$9.89"}}, new Object[]{"Transaction ID", "Lot Used", "Payment"});
+		DefaultTableModel completedModel = new DefaultTableModel();
+		completedModel.setColumnIdentifiers(new String[]{"Transaction ID", "Lot Used", "Check In", "Check Out", "Payment"});
+		completedTransactions = new JTable();
+		completedTransactions.setModel(completedModel);
 		transactionConstraints.gridx = 1;
 		transactionConstraints.gridy = 1;
 		transactionConstraints.insets = rightInsets;
@@ -317,7 +337,36 @@ public class ProgramWindow {
 		window.setVisible(true);
 		
 	}
-	
+
+	/**
+	 * This method should be called whenever the transaction log
+	 * tab is selected. It will update the transaction log tables
+	 * so that they accurately reflect the current transactions'
+	 * statuses.
+	 */
+	private void updateTransactionLogs() {
+		
+		//Clear the currently present data
+		DefaultTableModel model = (DefaultTableModel) activeTransactions.getModel();
+		model.setRowCount(0);
+		
+		//Add in data from active transactions
+		HashMap<Integer, Pair<Transaction, Card>> actives = ticketManager.getOutstandingTransactions();
+		for(Integer i : actives.keySet()) {
+			Transaction t = actives.get(i).a;
+			model.addRow(new Object[]{t.transactionId, t.lotUsed.getName(), t.timeEnteredDate});
+		}
+		
+		//Clear the currently present data
+		model = (DefaultTableModel) completedTransactions.getModel();
+		model.setRowCount(0);
+		
+		//Add in data from completed transactions
+		ArrayList<Transaction> completed = ticketManager.getCompletedTransactions();
+		for(Transaction t : completed) {
+			model.addRow(new Object[]{t.transactionId, t.lotUsed.getName(), t.timeEnteredDate, t.timeExitedDate, String.format("$%0.2f", t.totalCost)});
+		}
+	}
 	
 	/**
 	 * This method is called whenever the "Enter Lot" button on the
@@ -336,13 +385,15 @@ public class ProgramWindow {
         boolean success = ticketManager.startTransaction(card);
         
         if(success){
-            ticketManager.setGateOpen();
-            try{
-                Thread.sleep(5000);
-            }catch(InterruptedException e){
-                e.printStackTrace();
-            }
-            ticketManager.setGateClosed();
+        	(new Thread(()->{
+                ticketManager.setGateOpen();
+                try{
+                    Thread.sleep(5000);
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+                ticketManager.setGateClosed();
+        	})).start();
         }else{
             System.out.println("An open spot could not be found!");
         }
