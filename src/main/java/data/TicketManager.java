@@ -41,12 +41,9 @@ public class TicketManager implements Hardware {
 	 * @param card payment card
 	 * @return true if the transaction was created and the customer may park; false otherwise
 	 */
-	public boolean startTransaction(Card card) {
-		//TODO: get the lot where the user is parking, for now we're just making it the 0th lot
-		int customerLotIndex = 0;
-		
+	public boolean startTransaction(Card card, int lotIndex) {		
 		//get open lot, and check if valid
-		ParkingLot customerLot = lots.get(customerLotIndex);
+		ParkingLot customerLot = lots.get(lotIndex);
 		LotSection lotsection = customerLot.getOpenLotSection();
 		if(lotsection == null) return false;
 		
