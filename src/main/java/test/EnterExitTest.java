@@ -1,6 +1,7 @@
 package test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -31,7 +32,7 @@ class EnterExitTest {
 	    ticketManager.addLot(southLot);
 		
 	    i = 0;
-	    while (ticketManager.getLots().get(0).getOpenSectionSize() > 0) {
+	    while (ticketManager.getLots().get(0).getNumOpenSections() > 0) {
 	    	ticketManager.getLots().get(0).getOpenLotSection().fillSpot();
 	    	i++;
 	    }
@@ -70,7 +71,7 @@ class EnterExitTest {
 	@Test
 	@Order(4)
 	void fullLotExceptionTest() {
-	    while (ticketManager.getLots().get(0).getOpenSectionSize() > 0) {
+	    while (ticketManager.getLots().get(0).getNumOpenSections() > 0) {
 	    	ticketManager.getLots().get(0).getOpenLotSection().fillSpot();
 	    }
 	    
