@@ -246,7 +246,7 @@ public class ProgramWindow {
 		lotsModel = new DefaultTableModel();
 		lotsModel.setColumnIdentifiers(new String[] {"ID", "Lot Name", "Sections", "Open Sections", "Hourly Rate"});
 		
-		for(int i = 0; i < ticketManager.getLotSize(); i++) {
+		for(int i = 0; i < ticketManager.getNumLots(); i++) {
 			addLotToTableModel(lotsModel, ticketManager.getLots().get(i));
 		}
 		
@@ -267,7 +267,7 @@ public class ProgramWindow {
 		sectionsModel = new DefaultTableModel();
 		sectionsModel.setColumnIdentifiers(new String[] {"ID", "Section Name", "Total Spots", "Open Spots"});
 		
-		for (int i = 0; i < ticketManager.getLots().get(0).getSectionSize(); i++) {
+		for (int i = 0; i < ticketManager.getLots().get(0).getNumSections(); i++) {
 			addSectionToTableModel(sectionsModel, ticketManager.getLots().get(0).sections.get(i));
 		}
 		
@@ -458,7 +458,7 @@ public class ProgramWindow {
 		String lotName = newLotName.getText();
 		if (lotName.length() == 0) return;
 		
-		int lotId = ticketManager.getLotSize();
+		int lotId = ticketManager.getNumLots();
 		
 		ParkingLot newLot = new ParkingLot(lotId, lotName);
 		
@@ -517,7 +517,7 @@ public class ProgramWindow {
 		ticketManager.removeLot(ticketManager.getLots().get(activeLotsTable.getSelectedRow()));
 		
 		clearTableModel(lotsModel);
-		for (int i = 0; i < ticketManager.getLotSize(); i++) 
+		for (int i = 0; i < ticketManager.getNumLots(); i++) 
 			addLotToTableModel(lotsModel, ticketManager.getLots().get(i));
 		
 		ParkingLot lotToShow;
@@ -534,7 +534,7 @@ public class ProgramWindow {
 		
 		
 		clearTableModel(sectionsModel);
-		for (int i = 0; i < lotToShow.getSectionSize(); i++) 
+		for (int i = 0; i < lotToShow.getNumSections(); i++) 
 			addSectionToTableModel(sectionsModel, lotToShow.sections.get(i));
 		
 	}
@@ -567,7 +567,7 @@ public class ProgramWindow {
 		sectionsModel.removeRow(lotSectionsTable.getSelectedRow());
 		
 		clearTableModel(sectionsModel);
-		for (int i = 0; i < lotToShow.getSectionSize(); i++) 
+		for (int i = 0; i < lotToShow.getNumSections(); i++) 
 			addSectionToTableModel(sectionsModel, lotToShow.sections.get(i));
 		
 	}
@@ -579,12 +579,12 @@ public class ProgramWindow {
         
         String sectionArrayString = "", openSectionArrayString = "";
         for (int j = 0; j < lot.sections.size(); j++) {
-        	sectionArrayString += lot.sections.get(j).getName() + (j < lot.getSectionSize() - 1 ? ", " : "");
+        	sectionArrayString += lot.sections.get(j).getName() + (j < lot.getNumSections() - 1 ? ", " : "");
         }
         
         for (int j = 0; j < lot.sections.size(); j++) {
         	if (lot.sections.get(j).hasOpenSpots())
-        		openSectionArrayString += lot.sections.get(j).getName() + (j < lot.getOpenSectionSize() - 1 ? ", " : "");
+        		openSectionArrayString += lot.sections.get(j).getName() + (j < lot.getNumOpenSections() - 1 ? ", " : "");
         }
         	
         rowData[0] = lot.lotId;
