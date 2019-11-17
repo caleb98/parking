@@ -37,7 +37,12 @@ public class LotSection {
 	 * Opens a spot in this lot.
 	 */
 	public void setOpen() {
-		occupiedSpots--;
+		if (occupiedSpots > 0)
+			occupiedSpots--;
+		else {
+			System.out.println("You shouldn't be in here! Something went wrong.");
+			throw new IndexOutOfBoundsException("Car is trying to leave empty lot section " + name);
+		}
 	}
 	
 	public void setId(int id) {
@@ -48,7 +53,13 @@ public class LotSection {
 	 * Fills a spot in this lot.
 	 */
 	public void fillSpot() {
-		occupiedSpots++;
+		if (occupiedSpots < totalSpots)
+			occupiedSpots++;
+		else {
+			System.out.println("Sorry, there are no spots open.");
+			throw new IndexOutOfBoundsException("No spots open in lot section " + name);
+		}
+			
 	}
 
 	public String getName(){
