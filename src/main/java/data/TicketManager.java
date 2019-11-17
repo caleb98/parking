@@ -107,7 +107,7 @@ public class TicketManager implements Hardware {
 		return section;
 	}
 	
-	public int getLotSize() {
+	public int getNumLots() {
 		return lots.size();
 	}
 

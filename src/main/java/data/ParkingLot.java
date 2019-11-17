@@ -24,11 +24,23 @@ public class ParkingLot {
 		hourlyRate = rate;
 	}
 	
+	/**
+	 * Adds a section to this lot and sets the section's ID
+	 * appropriately.
+	 * @param section the section to add
+	 * @return 
+	 */
 	public boolean addSection(LotSection section){
-		section.setId(this.getSectionSize());
+		section.setId(this.getNumSections());
 		return sections.add(section);
 	}
 
+	/**
+	 * Removes the given section from this lot and updates the IDs of 
+	 * the remaining sections.
+	 * @param section the section to remove
+	 * @return true if the lot contained the given section; false otherwise
+	 */
 	public boolean removeSection(LotSection section) {
 		boolean success = sections.remove(section);
 		for(int i = 0; i < sections.size(); ++i) {
@@ -37,11 +49,17 @@ public class ParkingLot {
 		return success;
 	}
 	
-	public int getSectionSize () {
+	/**
+	 * @return the total number of sections in this lot
+	 */
+	public int getNumSections() {
 		return sections.size();
 	}
 	
-	public int getOpenSectionSize() {
+	/**
+	 * @return the number of sections with open spaces
+	 */
+	public int getNumOpenSections() {
 		int size = 0;
 		for(int i = 0; i < sections.size(); i++){
 			if(sections.get(i).hasOpenSpots()){
@@ -51,6 +69,9 @@ public class ParkingLot {
 		return size;
 	}
 
+	/**
+	 * @return the first open lot section available
+	 */
 	public LotSection getOpenLotSection(){
 		LotSection section = null;
 		for(int i = 0; i < sections.size(); i++){
@@ -60,5 +81,12 @@ public class ParkingLot {
 			}
 		}
 		return section;
+	}
+	
+	/**
+	 * @return a list of all sections in this lot
+	 */
+	public ArrayList<LotSection> getAllSections() {
+		return sections;
 	}
 }
