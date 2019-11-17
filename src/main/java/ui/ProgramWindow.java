@@ -480,7 +480,26 @@ public class ProgramWindow {
 	 * @param e
 	 */
 	private void addSectionButtonPressed(ActionEvent e) {
-		//TODO: implement this method
+		
+		String sectionName = newSectionName.getText();
+		int sectionSpots = Integer.parseInt(newSectionSpots.getText());
+		
+		if (sectionName.length() == 0) return;
+		
+		ParkingLot lotToShow;
+		if (activeLotsTable.getSelectedRow() > 0)
+			lotToShow = ticketManager.getLots().get(activeLotsTable.getSelectedRow());
+		else
+			lotToShow = ticketManager.getLots().get(0);
+		
+		LotSection newSection = new LotSection(sectionName, sectionSpots);
+		lotToShow.addSection(newSection);
+		
+		addSectionToTableModel(sectionsModel, newSection);
+		
+		newSectionName.setText("");
+		newSectionSpots.setText("");
+		
 	}
 	
 	/**
