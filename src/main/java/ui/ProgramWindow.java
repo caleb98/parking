@@ -24,6 +24,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import data.Card;
@@ -251,6 +253,12 @@ public class ProgramWindow {
 		}
 		
 		activeLotsTable.setModel(lotsModel);
+		
+		activeLotsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+	        public void valueChanged(ListSelectionEvent event) {
+	        	showSectionsForLot(activeLotsTable.getSelectedRow());
+	        }
+	    });
 		
 		
 		activeLotsTable.setFillsViewportHeight(true);
@@ -570,6 +578,15 @@ public class ProgramWindow {
 		for (int i = 0; i < lotToShow.getNumSections(); i++) 
 			addSectionToTableModel(sectionsModel, lotToShow.sections.get(i));
 		
+	}
+	
+	private void showSectionsForLot(int id) {
+		ParkingLot lotToShow;
+		lotToShow = ticketManager.getLots().get(activeLotsTable.getSelectedRow());
+		
+		clearTableModel(sectionsModel);
+		for (int i = 0; i < lotToShow.getNumSections(); i++) 
+			addSectionToTableModel(sectionsModel, lotToShow.sections.get(i));
 	}
 	
 	
