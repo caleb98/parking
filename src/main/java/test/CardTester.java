@@ -11,7 +11,7 @@ class CardTester {
 	public static final String name = "Joe Smith";
 	public static final String longCardNumber = "12345678901234567";
 	public static final String shortCardNumber = "123456789012345";
-	public static final String goodCardNumber = "1234567890123425";
+	public static final String goodCardNumber = "1234567890123437";
 	public static final String expDateOne = "1010";
 	public static final String expDateTwo = "1119";
 	public static final String goodExpDate = "1120";
