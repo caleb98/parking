@@ -11,20 +11,11 @@ public class TicketManager implements Hardware {
 	private boolean gateOpen = false;
 
 	private HashMap<Integer, Pair<Transaction, Card>> outstandingTransactions = new HashMap<>();
-	private ArrayList<ParkingLot> lots = new ArrayList<ParkingLot>();
+	private ParkingLot lot;
 	private ArrayList<Transaction> completedTransactions = new ArrayList<Transaction>();
 	
-	public boolean addLot(ParkingLot parkingLot) {
-		parkingLot.lotId = lots.size();
-		return lots.add(parkingLot);
-	}
-	
-	public boolean removeLot(ParkingLot parkingLot) {
-		boolean success = lots.remove(parkingLot);
-		for(int i = 0; i < lots.size(); ++i) {
-			lots.get(i).lotId = i;
-		}
-		return success;
+	public TicketManager(ParkingLot lot){
+		this.lot = lot;
 	}
 	
 	public HashMap<Integer, Pair<Transaction, Card>> getOutstandingTransactions() {
@@ -43,12 +34,11 @@ public class TicketManager implements Hardware {
 	 */
 	public boolean startTransaction(Card card, int lotIndex) {		
 		//get open lot, and check if valid
-		ParkingLot customerLot = lots.get(lotIndex);
-		LotSection lotsection = customerLot.getOpenLotSection();
+		LotSection lotsection = lot.getOpenLotSection();
 		if(lotsection == null) return false;
 		
 		// create new transaction
-		Transaction transaction = new Transaction(completedTransactions.size() + outstandingTransactions.size(), customerLot.hourlyRate, lotsection);
+		Transaction transaction = new Transaction(completedTransactions.size() + outstandingTransactions.size(), lot.hourlyRate, lotsection);
 		
 		// fill lot section spot
 		transaction.lotUsed.fillSpot();
@@ -103,17 +93,18 @@ public class TicketManager implements Hardware {
 	 * @return a lot section with empty spots; null if all sections are full
 	 */
 	public LotSection getOpenLotSection(int lotIndex){
-		LotSection section = lots.get(lotIndex).getOpenLotSection();		
+		LotSection section = lot.getOpenLotSection();		
 		return section;
 	}
 	
-	public int getNumLots() {
+	//IDK even know - Alec
+	/*public int getNumLots() {
 		return lots.size();
-	}
+	}*/
 
-	public ArrayList<ParkingLot> getLots () {
-		return lots;
-	}
+	// public ArrayList<ParkingLot> getLots () {
+	// 	return lots;
+	// }
 	
 	
 	
@@ -144,7 +135,8 @@ public class TicketManager implements Hardware {
 		}catch(IOException e){
 			e.printStackTrace();
 		}
-		Card card = new Card(name, cardNum, expirationDate, ssn);
+		//TODO FIX THIS
+		Card card = new Card(name, String.valueOf(cardNum), expirationDate, ssn);
 		//TODO Validate Card
 		return card;
 	}

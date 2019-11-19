@@ -6,27 +6,35 @@ public class Transaction {
 
 	public final int transactionId;
 	public final LotSection lotUsed;
-	public final float hourlyRate;
 	public final long timeEnteredInMS;
 	public final Date timeEnteredDate;
 	
 	public long timeExitedInMS = 0;
 	public Date timeExitedDate = null;
-	public float totalCost;
+	private double totalCost;
+	private double hourlyRate;
 	
-	public Transaction(int id, float rate, LotSection sectionUsed) {
+	public Transaction(int id, double hourlyRate, LotSection sectionUsed) {
 		transactionId = id;
 		lotUsed = sectionUsed;
-		hourlyRate = rate;
 		timeEnteredInMS = System.currentTimeMillis();
 		timeEnteredDate = new Date(timeEnteredInMS);
+		this.hourlyRate = hourlyRate;
 	}
 	
 	public void closeTransaction() {
 		timeExitedInMS = System.currentTimeMillis();
 		timeExitedDate = new Date(timeExitedInMS);
 		
-		totalCost = (float) Math.ceil(((timeExitedInMS - timeEnteredInMS) / 1000f) / 60f) / 60f * hourlyRate;
+		totalCost = hourlyRate * (timeExitedInMS - timeEnteredInMS) / 1000 / 60 / 60;
+	}
+
+	public double getHourlyRate(){
+		return hourlyRate;
+	}
+
+	public double getTotalCost(){
+		return totalCost;
 	}
 	
 	// return the time difference of the transaction
