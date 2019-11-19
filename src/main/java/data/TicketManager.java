@@ -14,7 +14,12 @@ public class TicketManager {
 	}
 	
 	public boolean removeLot(ParkingLot lot) {
-		return lots.remove(lot);
+		boolean success = lots.remove(lot);
+		for(int i = 0; i < lots.size(); ++i) {
+			lots.get(i).lotId = i;
+		}
+		
+		return success;
 	}
 	
 	public HashMap<Integer, Pair<Transaction, Card>> getOutstandingTransactions() {

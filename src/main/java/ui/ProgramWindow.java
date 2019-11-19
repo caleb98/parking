@@ -59,6 +59,7 @@ public class ProgramWindow {
 	private JButton newSectionSubmit;
 	private JButton removeSectionButton;
 	private JTable lotSectionsTable;
+	private ListSelectionListener viewSectionsListener;
 	
 	//Customer portal panel
 	private JPanel customerPanel;
@@ -254,11 +255,13 @@ public class ProgramWindow {
 		
 		activeLotsTable.setModel(lotsModel);
 		
-		activeLotsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+		viewSectionsListener = new ListSelectionListener() {
 	        public void valueChanged(ListSelectionEvent event) {
 	        	showSectionsForLot(activeLotsTable.getSelectedRow());
 	        }
-	    });
+		};
+		
+		activeLotsTable.getSelectionModel().addListSelectionListener(viewSectionsListener);
 		
 		
 		activeLotsTable.setFillsViewportHeight(true);
@@ -528,16 +531,20 @@ public class ProgramWindow {
 	 */
 	private void removeLotButtonPressed(ActionEvent e) {
 		
+		
 		ticketManager.removeLot(ticketManager.getLots().get(activeLotsTable.getSelectedRow()));
 		
+		activeLotsTable.getSelectionModel().removeListSelectionListener(viewSectionsListener);
 		clearTableModel(lotsModel);
-		for (int i = 0; i < ticketManager.getNumLots(); i++) 
+		
+		
+		
+		for (int i = 0; i < ticketManager.getLots().size(); i++) 
 			addLotToTableModel(lotsModel, ticketManager.getLots().get(i));
 		
+		
 		ParkingLot lotToShow;
-		if (activeLotsTable.getSelectedRow() > 0)
-			lotToShow = ticketManager.getLots().get(activeLotsTable.getSelectedRow());
-		else if (ticketManager.getLots().size() > 0)
+		if (ticketManager.getLots().size() > 0)
 			lotToShow = ticketManager.getLots().get(0);
 		else {
 			clearTableModel(sectionsModel);
@@ -546,10 +553,11 @@ public class ProgramWindow {
 		
 		
 		
-		
 		clearTableModel(sectionsModel);
 		for (int i = 0; i < lotToShow.getNumSections(); i++) 
 			addSectionToTableModel(sectionsModel, lotToShow.sections.get(i));
+		
+		activeLotsTable.getSelectionModel().addListSelectionListener(viewSectionsListener);
 		
 	}
 	
@@ -574,6 +582,7 @@ public class ProgramWindow {
 			lotIndex = activeLotsTable.getSelectedRow();
 			lotToShow = ticketManager.getLots().get(activeLotsTable.getSelectedRow());
 		} else {
+			lotIndex = 0;
 			lotToShow = ticketManager.getLots().get(0);
 		}
 		
@@ -630,7 +639,8 @@ public class ProgramWindow {
 	}
 	
 	private void clearTableModel(DefaultTableModel model) {
-		model.setRowCount(0);
+		
+			model.setRowCount(0);
 	}
 	
 }
