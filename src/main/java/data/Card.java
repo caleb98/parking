@@ -20,18 +20,18 @@ public class Card {
 	/**
 	 * The three digit security code printed on the back of the card.
 	 */
-	public final int securityCode;
+	public final String securityCode;
 	
 	public static boolean reject = false;
 	
-	public Card(String name, String cardNumber, String expirationDate, int securityCode){
+	public Card(String name, String cardNumber, String expirationDate, String securityCode){
 		this.name = name;
 		this.cardNumber = cardNumber;
-			if(cardNumber.length() < 16) {
+			if(cardNumber.length() < 12) {
 				System.out.println("Error: Card number is too short.");
 				rejectCard(101);
 			}//end if
-			else if(cardNumber.length() > 16) {
+			else if(cardNumber.length() > 12) {
 				System.out.println("Error: Card number is too long.");
 				rejectCard(102);
 			}//end else if
@@ -72,11 +72,17 @@ public class Card {
 				rejectCard(104);
 			}//end if
 		this.securityCode = securityCode;
-			if(securityCode - 100 < 0){
+			for(int i = 0; i < securityCode.length(); i++) {
+				if(!Character.isDigit(securityCode.charAt(i))) {
+					System.out.println("Error: Security code is not made up of digits.");
+					rejectCard(106);
+				}//end if
+			}//end for
+			if((securityCode.length() < 3){
 				System.out.println("Error: Security code has too few digits.");
 				rejectCard(105);
 			}//end if
-			else if(securityCode - 100 > 899) {
+			else if(securityCode.length() > 3) {
 				System.out.println("Error: Security code has too many digits.");
 				rejectCard(106);
 			}//end else if
