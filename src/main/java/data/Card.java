@@ -22,6 +22,8 @@ public class Card {
 	 */
 	public final int securityCode;
 	
+	public static boolean reject = false;
+	
 	public Card(String name, String cardNumber, String expirationDate, int securityCode){
 		this.name = name;
 		this.cardNumber = cardNumber;
@@ -81,7 +83,6 @@ public class Card {
 	}//end card constructor
 	
 	public boolean rejectCard(int errorCode){
-		boolean reject = false;
 			if(errorCode > 100 && errorCode < 200) {
 				reject = true;
 			}//end if
