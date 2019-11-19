@@ -98,8 +98,8 @@ public class ParkingLot implements Hardware {
 	@Override
 	public Card scanCard(){
 		String name = "";
-		long cardNum = 0;
-		int ssn = 0;
+		String cardNum = "";
+		String cvv = "";
 		String expirationDate = "";
 		
 		try{
@@ -110,11 +110,10 @@ public class ParkingLot implements Hardware {
 			name = br.readLine();
 			
 			System.out.print("Enter Card Number: ");
-			String cardNumber = br.readLine();
-			cardNum = Long.parseLong(cardNumber);
+			cardNum = br.readLine();
 			
 			System.out.print("Enter CVV of Card: ");
-			ssn = Integer.parseInt(br.readLine());
+			cvv= br.readLine();
 			
 			System.out.print("Enter expiration date: ");
 			expirationDate = br.readLine();
@@ -123,7 +122,7 @@ public class ParkingLot implements Hardware {
 			e.printStackTrace();
 		}
 		//TODO FIX THIS
-		Card card = new Card(name, String.valueOf(cardNum), expirationDate, ssn);
+		Card card = new Card(name, String.valueOf(cardNum), expirationDate, cvv);
 		//TODO Validate Card
 		return card;
 	}

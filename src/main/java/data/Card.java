@@ -78,7 +78,7 @@ public class Card {
 					rejectCard(106);
 				}//end if
 			}//end for
-			if((securityCode.length() < 3){
+			if (securityCode.length() < 3){
 				System.out.println("Error: Security code has too few digits.");
 				rejectCard(105);
 			}//end if
