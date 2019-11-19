@@ -67,7 +67,7 @@ public class Card {
 			int cardMonth = Integer.parseInt(expirationDate.substring(0,1));
 			int currentYear = Integer.parseInt((java.time.LocalDateTime.now().toString().substring(2,4))); 
 			int currentMonth = Integer.parseInt((java.time.LocalDateTime.now().toString().substring(5,7)));
-			if((cardYear < currentYear) || ((cardMonth < currentMonth) && (cardYear < currentYear + 1))){
+			if((cardYear < currentYear) || ((cardMonth < currentMonth) && (cardYear == currentYear))){
 				System.out.println("Error: Credit card has expired.");
 				rejectCard(104);
 			}//end if
