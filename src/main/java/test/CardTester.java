@@ -24,42 +24,42 @@ class CardTester {
 	@Test
 	void cardLongNumberTest(Card card){
 		Card longNumber = new Card(name, longCardNumber, goodExpDate, goodSecCode);
-		assert(Card.reject) == true;
+		assertTrue(Card.reject);
 	}//end cardLongNumberTest
 	
 	@Test
 	void cardShortNumberTest(Card card) {
 		Card shortNumber = new Card(name, shortCardNumber, goodExpDate, goodSecCode);
-		assert(Card.reject) == true;
+		assertTrue(Card.reject);
 	}//end cardShortNumberTest
 	
 	@Test
 	void badExpOneTest(Card card) {
 		Card badExpOne = new Card(name, goodCardNumber, expDateOne, goodSecCode);
-		assert(Card.reject) == true;
+		assertTrue(Card.reject);
 	}//end badExpOneTest		
 		
 	@Test
 	void badExpTwoTest(Card card) {
 		Card badExpTwo = new Card(name, goodCardNumber, expDateTwo, goodSecCode);
-		assert(Card.reject) == true;
+		assertTrue(Card.reject);
 	}//end badExpTwoTest
 	
 	@Test
 	void badSecCodeOneTest(Card card) {
 		Card badSecOne = new Card(name, goodCardNumber, goodExpDate, secCodeOne);
-		assert(Card.reject) == true; 
+		assertTrue(Card.reject); 
 	}//end badSecCodeOneTest
 	
 	@Test
 	void badSecCodeTwoTest(Card card) { 
 		Card badSecTwo = new Card(name, goodCardNumber, goodExpDate, secCodeTwo);
-		assert(Card.reject) == true;
+		assertTrue(Card.reject);
 	}//end badSecCodeTwoTest
 	
 	@Test
 	void goodCardTest(Card card) {
 		Card lastOne = new Card(name, goodCardNumber, goodExpDateTwo, goodSecCode);
-		assert(Card.reject) == false; 
+		assertFalse(Card.reject); 
 	}//end goodCardTest
 }//end test class
