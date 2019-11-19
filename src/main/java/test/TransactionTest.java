@@ -1,16 +1,15 @@
 package test;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
-import data.ParkingLot;
 import data.LotSection;
+import data.ParkingLot;
 import data.TicketManager;
 import data.Transaction;
 
@@ -35,7 +34,7 @@ class TransactionTest {
 	@Test
 	@Order(2)
 	void tranasctionCreation(){
-        transcaction = new Transaction(0, lot.hourlyRate, lot.getOpenLotSection());
+        transcaction = new Transaction(0, lot.hourlyRate, lot, lot.getOpenLotSection());
         assertTrue(transcaction != null);
     }
 

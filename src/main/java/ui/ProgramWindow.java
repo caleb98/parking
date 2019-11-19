@@ -376,7 +376,7 @@ public class ProgramWindow {
 		HashMap<Integer, Pair<Transaction, Card>> actives = ticketManager.getOutstandingTransactions();
 		for(Integer i : actives.keySet()) {
 			Transaction t = actives.get(i).a;
-			model.addRow(new Object[]{t.transactionId, t.lotUsed.getName(), t.timeEnteredDate});
+			model.addRow(new Object[]{t.transactionId, t.lotUsed.lotName, t.timeEnteredDate});
 		}
 		
 		//Clear the currently present data
@@ -386,7 +386,7 @@ public class ProgramWindow {
 		//Add in data from completed transactions
 		ArrayList<Transaction> completed = ticketManager.getCompletedTransactions();
 		for(Transaction t : completed) {
-			model.addRow(new Object[]{t.transactionId, t.lotUsed.getName(), t.timeEnteredDate, t.timeExitedDate, String.format("$%0.2f", t.totalCost)});
+			model.addRow(new Object[]{t.transactionId, t.lotUsed.lotName, t.timeEnteredDate, t.timeExitedDate, String.format("$%0.2f", t.getTotalCost())});
 		}
 	}
 	
@@ -400,18 +400,21 @@ public class ProgramWindow {
 	 * @param e
 	 */
 	private void enterLotButtonPressed(ActionEvent event) {
-		Card card = ticketManager.scanCard();
+		int lotIndex = terminalSelectBox.getSelectedIndex();
+		ParkingLot activeLot = ticketManager.getLots().get(lotIndex);
+		
+		Card card = activeLot.scanCard();
         boolean success = ticketManager.startTransaction(card, terminalSelectBox.getSelectedIndex());
         
         if(success){
         	(new Thread(()->{
-                ticketManager.setGateOpen();
+                activeLot.setGateOpen();
                 try{
                     Thread.sleep(5000);
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }
-                ticketManager.setGateClosed();
+                activeLot.setGateClosed();
         	})).start();
         }else{
             System.out.println("An open spot could not be found!");
@@ -433,7 +436,10 @@ public class ProgramWindow {
 	 * @param e
 	 */
 	private void exitLotButtonPressed(ActionEvent event) {
-		int ticketId = ticketManager.scanTicket();
+		int lotIndex = terminalSelectBox.getSelectedIndex();
+		ParkingLot activeLot = ticketManager.getLots().get(lotIndex);
+		
+		int ticketId = activeLot.scanTicket();
         boolean tranasctionComplete = ticketManager.completeTransaction(ticketId);
         if(tranasctionComplete) {
             System.out.println("Transaction has been completed");

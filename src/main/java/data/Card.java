@@ -27,11 +27,11 @@ public class Card {
 	public Card(String name, String cardNumber, String expirationDate, int securityCode){
 		this.name = name;
 		this.cardNumber = cardNumber;
-			if(cardNumber.length() < 12) {
+			if(cardNumber.length() < 16) {
 				System.out.println("Error: Card number is too short.");
 				rejectCard(101);
 			}//end if
-			else if(cardNumber.length() > 12) {
+			else if(cardNumber.length() > 16) {
 				System.out.println("Error: Card number is too long.");
 				rejectCard(102);
 			}//end else if

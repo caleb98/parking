@@ -1,21 +1,20 @@
 package data;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TicketManager implements Hardware {
+public class TicketManager {
 	
-	private boolean gateOpen = false;
-
 	private HashMap<Integer, Pair<Transaction, Card>> outstandingTransactions = new HashMap<>();
-	private ParkingLot lot;
+	private ArrayList<ParkingLot> lots = new ArrayList<>();
 	private ArrayList<Transaction> completedTransactions = new ArrayList<Transaction>();
 	
-	public TicketManager(ParkingLot lot){
-		this.lot = lot;
+	public boolean addLot(ParkingLot lot) {
+		return lots.add(lot);
+	}
+	
+	public boolean removeLot(ParkingLot lot) {
+		return lots.remove(lot);
 	}
 	
 	public HashMap<Integer, Pair<Transaction, Card>> getOutstandingTransactions() {
@@ -34,18 +33,20 @@ public class TicketManager implements Hardware {
 	 */
 	public boolean startTransaction(Card card, int lotIndex) {		
 		//get open lot, and check if valid
-		LotSection lotsection = lot.getOpenLotSection();
-		if(lotsection == null) return false;
+		ParkingLot openLot = getOpenLot();
+		if(openLot == null) return false;
+		
+		LotSection openSection = openLot.getOpenLotSection();
 		
 		// create new transaction
-		Transaction transaction = new Transaction(completedTransactions.size() + outstandingTransactions.size(), lot.hourlyRate, lotsection);
+		Transaction transaction = new Transaction(completedTransactions.size() + outstandingTransactions.size(), openLot.hourlyRate, openLot, openSection);
 		
 		// fill lot section spot
-		transaction.lotUsed.fillSpot();
+		transaction.sectionUsed.fillSpot();
 		
 		// add to outstanding transactions
 		outstandingTransactions.put(transaction.transactionId, new Pair<>(transaction, card));
-		this.printTicket(transaction);
+		transaction.lotUsed.printTicket(transaction);
 		return true;
 	}
 	
@@ -80,10 +81,10 @@ public class TicketManager implements Hardware {
 		transaction.closeTransaction();
 		
 		// Set an open spot in the lot where this customer was parked.
-		transaction.lotUsed.setOpen();
+		transaction.sectionUsed.setOpen();
 		
 		// Print receipt
-		printReceipt(transaction);
+		transaction.lotUsed.printReceipt(transaction);
 		return true;
 	}
 
@@ -92,103 +93,45 @@ public class TicketManager implements Hardware {
 	 * customer could park.
 	 * @return a lot section with empty spots; null if all sections are full
 	 */
-	public LotSection getOpenLotSection(int lotIndex){
-		LotSection section = lot.getOpenLotSection();		
+	public LotSection getOpenLotSection(){
+		LotSection section = null;	
+		for(ParkingLot lot : lots) {
+			if(lot.getOpenLotSection() == null) {
+				section = lot.getOpenLotSection();
+				break;
+			}
+		}
 		return section;
 	}
 	
-	//IDK even know - Alec
-	/*public int getNumLots() {
+	/**
+	 * Searches the managed lots for an open lot that has space for a new customer to
+	 * park.
+	 * @return a lot with empty spots; null if all lots are full
+	 */
+	public ParkingLot getOpenLot() {
+		ParkingLot open = null;
+		for(ParkingLot lot : lots) {
+			if(lot.getNumOpenSections() > 0) {
+				open = lot;
+				break;
+			}
+		}
+		return open;
+	}
+	
+	/**
+	 * @return the total number lots managed by this manager
+	 */
+	public int getNumLots() {
 		return lots.size();
-	}*/
-
-	// public ArrayList<ParkingLot> getLots () {
-	// 	return lots;
-	// }
-	
-	
-	
-	@Override
-	public Card scanCard(){
-		String name = "";
-		long cardNum = 0;
-		int ssn = 0;
-		String expirationDate = "";
-		
-		try{
-			InputStreamReader isr = new InputStreamReader(System.in);
-			BufferedReader br = new BufferedReader(isr);
-			
-			System.out.print("Enter your name: ");
-			name = br.readLine();
-			
-			System.out.print("Enter Card Number: ");
-			String cardNumber = br.readLine();
-			cardNum = Long.parseLong(cardNumber);
-			
-			System.out.print("Enter SSN of Card: ");
-			ssn = Integer.parseInt(br.readLine());
-			
-			System.out.print("Enter expiration date: ");
-			expirationDate = br.readLine();
-			
-		}catch(IOException e){
-			e.printStackTrace();
-		}
-		//TODO FIX THIS
-		Card card = new Card(name, String.valueOf(cardNum), expirationDate, ssn);
-		//TODO Validate Card
-		return card;
 	}
 
-	@Override
-    public void setGateOpen(){
-		this.gateOpen = true;
-		System.out.println("Gate is open");
-	}
-
-	@Override
-    public void setGateClosed(){
-		this.gateOpen = false;
-		System.out.println("Gate is closed");
-	}
-
-    /**
-     * Scans a ticket and returns the id listed on ticket. If
-     * an error occurs will return -1.
-     * @return ticket id; -1 if error
-     */
-	@Override
-    public int scanTicket(){
-		int ticketId = -1;
-		try{
-			InputStreamReader isr = new InputStreamReader(System.in);
-			BufferedReader br = new BufferedReader(isr);
-			System.out.print("Enter Ticket ID: ");
-			String card = br.readLine();
-			ticketId = Integer.parseInt(card);
-		}catch(IOException e){
-			e.printStackTrace();
-		}
-		return ticketId;
-	}
-
-	@Override
-	public void printTicket(Transaction transaction) {
-		System.out.println("----------------------------------------");
-		System.out.println("Ticket ID: " + transaction.transactionId);
-		System.out.println("Lot Assigned: " + transaction.lotUsed.getName());
-		System.out.println("Time Assigned: " + transaction.timeEnteredInMS);
-		System.out.println("----------------------------------------");
-	}
-
-	@Override
-	public void printReceipt(Transaction completed) {
-		System.out.println("----------------------------------------");
-		System.out.println("Ticket ID: " + completed.transactionId);
-		System.out.println("Lot Used: " + completed.lotUsed.getName());
-		System.out.println("Time Used: " + completed.getTimeDifferenceInMS());
-		System.out.println("----------------------------------------");
+	/**
+	 * @return gets the lots managed by this manager
+	 */
+	public ArrayList<ParkingLot> getLots () {
+		return lots;
 	}
 	
 }

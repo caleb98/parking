@@ -5,8 +5,9 @@ import java.util.Date;
 public class Transaction {
 
 	public final int transactionId;
-	public final LotSection lotUsed;
-	public final long timeEnteredInMS;
+	public final ParkingLot lotUsed;
+	public final LotSection sectionUsed;
+	public long timeEnteredInMS;
 	public final Date timeEnteredDate;
 	
 	public long timeExitedInMS = 0;
@@ -14,9 +15,10 @@ public class Transaction {
 	private double totalCost;
 	private double hourlyRate;
 	
-	public Transaction(int id, double hourlyRate, LotSection sectionUsed) {
+	public Transaction(int id, double hourlyRate, ParkingLot lotUsed, LotSection sectionUsed) {
 		transactionId = id;
-		lotUsed = sectionUsed;
+		this.lotUsed = lotUsed;
+		this.sectionUsed = sectionUsed;
 		timeEnteredInMS = System.currentTimeMillis();
 		timeEnteredDate = new Date(timeEnteredInMS);
 		this.hourlyRate = hourlyRate;
