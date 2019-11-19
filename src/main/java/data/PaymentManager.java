@@ -38,7 +38,7 @@ public class PaymentManager {
 	public static boolean checkCard(Card card) {
 		//TODO: sometimes this will need to return false so we can test error handling.
 		//Return true since this is just a simulation.
-		if((card.cardNumber - 1000000000 < 0) || (String.valueOf(card.securityCode).length() < 3)) {
+		if(card.reject == true) {
 			return false;
 		}//end if
 		else {
