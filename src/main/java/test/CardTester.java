@@ -23,58 +23,50 @@ class CardTester {
 	
 	
 	@Test
-	void cardLongNumberTest(Card card){
-		@SuppressWarnings("unused")
+	void cardLongNumberTest(){
 		Card longNumber = new Card(name, longCardNumber, goodExpDate, goodSecCode);
-		assertTrue(Card.reject);
+		assertTrue(longNumber.reject);
 	}//end cardLongNumberTest
 	
 	@Test
-	void cardShortNumberTest(Card card) {
-		@SuppressWarnings("unused")
+	void cardShortNumberTest() {
 		Card shortNumber = new Card(name, shortCardNumber, goodExpDate, goodSecCode);
-		assertTrue(Card.reject);
+		assertTrue(shortNumber.reject);
 	}//end cardShortNumberTest
 	
 	@Test
-	void badExpOneTest(Card card) {
-		@SuppressWarnings("unused")
+	void badExpOneTest() {
 		Card badExpOne = new Card(name, goodCardNumber, expDateOne, goodSecCode);
-		assertTrue(Card.reject);
+		assertTrue(badExpOne.reject);
 	}//end badExpOneTest		
 		
 	@Test
-	void badExpTwoTest(Card card) {
-		@SuppressWarnings("unused")
+	void badExpTwoTest() {
 		Card badExpTwo = new Card(name, goodCardNumber, expDateTwo, goodSecCode);
-		assertTrue(Card.reject);
+		assertTrue(badExpTwo.reject);
 	}//end badExpTwoTest
 	
 	@Test
-	void badSecCodeOneTest(Card card) {
-		@SuppressWarnings("unused")
+	void badSecCodeOneTest() {
 		Card badSecOne = new Card(name, goodCardNumber, goodExpDate, secCodeOne);
-		assertTrue(Card.reject); 
+		assertTrue(badSecOne.reject); 
 	}//end badSecCodeOneTest
 	
 	@Test
-	void badSecCodeTwoTest(Card card) { 
-		@SuppressWarnings("unused")
+	void badSecCodeTwoTest() {
 		Card badSecTwo = new Card(name, goodCardNumber, goodExpDate, secCodeTwo);
-		assertTrue(Card.reject);
+		assertTrue(badSecTwo.reject);
 	}//end badSecCodeTwoTest
 	
 	@Test
-	void alphaSecCodeTest(Card card) { 
-		@SuppressWarnings("unused")
+	void alphaSecCodeTest() {
 		Card badSecTwo = new Card(name, goodCardNumber, goodExpDate, alphaSecCode);
-		assertTrue(Card.reject);
+		assertTrue(badSecTwo.reject);
 	}//end alphaSecCodeTest
 	
 	@Test
-	void goodCardTest(Card card) {
-		@SuppressWarnings("unused")
+	void goodCardTest() {
 		Card lastOne = new Card(name, goodCardNumber, goodExpDateTwo, goodSecCode);
-		assertFalse(Card.reject); 
+		assertTrue(lastOne.reject); 
 	}//end goodCardTest
 }//end test class
