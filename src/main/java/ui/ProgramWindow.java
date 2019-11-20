@@ -524,6 +524,17 @@ public class ProgramWindow {
 	 */
 	private void addSectionButtonPressed(ActionEvent e) {
 		
+		//Make sure that there are lots to which we can add sections
+		if(ticketManager.getNumLots() < 1) {
+			JOptionPane.showMessageDialog(
+					window,
+					"Please add a lot before adding sections.",
+					"Error",
+					JOptionPane.INFORMATION_MESSAGE
+			);
+			return;
+		}
+		
 		String sectionName = newSectionName.getText();
 		int sectionSpots;
 		try {
