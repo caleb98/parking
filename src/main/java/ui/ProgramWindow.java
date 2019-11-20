@@ -10,10 +10,9 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.swing.Icon;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -163,7 +162,8 @@ public class ProgramWindow {
 		termConstraints.gridy = 0;
 		terminalSelectPanel.add(terminalSelectLabel, termConstraints);
 		
-		terminalSelectBox = new JComboBox<String>(new String[]{"Parking Lot A", "Parking Lot B", "..."});
+		terminalSelectBox = new JComboBox<String>();
+		updateTerminalSelectBox();
 		termConstraints.gridx = 1;
 		termConstraints.weightx = 1;
 		termConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -260,9 +260,7 @@ public class ProgramWindow {
 	        	showSectionsForLot(activeLotsTable.getSelectedRow());
 	        }
 		};
-		
 		activeLotsTable.getSelectionModel().addListSelectionListener(viewSectionsListener);
-		
 		
 		activeLotsTable.setFillsViewportHeight(true);
 		editConstraints.anchor = GridBagConstraints.CENTER;
@@ -311,8 +309,6 @@ public class ProgramWindow {
 		});
 		
 		//Build the transaction log pane
-		//TODO: include the duration of each transaction? this would require updating the table periodically to
-		//update the values, but would be a cool feature.
 		transactionsPanel.setLayout(new GridBagLayout());
 		GridBagConstraints transactionConstraints = new GridBagConstraints();
 		
@@ -336,7 +332,7 @@ public class ProgramWindow {
 		transactionsPanel.add(completedTransactionsLabel, transactionConstraints);
 		
 		DefaultTableModel activeModel = new DefaultTableModel();
-		activeModel.setColumnIdentifiers(new String[]{"Transaction ID", "Lot Used", "Date"});
+		activeModel.setColumnIdentifiers(new String[]{"Transaction ID", "Lot Used", "Section Used", "Check In"});
 		activeTransactions = new JTable();
 		activeTransactions.setModel(activeModel);
 		transactionConstraints.gridx = 0;
@@ -347,7 +343,7 @@ public class ProgramWindow {
 		transactionsPanel.add(new JScrollPane(activeTransactions), transactionConstraints);
 		
 		DefaultTableModel completedModel = new DefaultTableModel();
-		completedModel.setColumnIdentifiers(new String[]{"Transaction ID", "Lot Used", "Check In", "Check Out", "Payment"});
+		completedModel.setColumnIdentifiers(new String[]{"Transaction ID", "Lot Used", "Section Used", "Check In", "Check Out", "Payment"});
 		completedTransactions = new JTable();
 		completedTransactions.setModel(completedModel);
 		transactionConstraints.gridx = 1;
@@ -379,7 +375,7 @@ public class ProgramWindow {
 		HashMap<Integer, Pair<Transaction, Card>> actives = ticketManager.getOutstandingTransactions();
 		for(Integer i : actives.keySet()) {
 			Transaction t = actives.get(i).a;
-			model.addRow(new Object[]{t.transactionId, t.lotUsed.lotName, t.timeEnteredDate});
+			model.addRow(new Object[]{t.transactionId, t.lotUsed.lotName, t.sectionUsed.getName(), t.timeEnteredDate});
 		}
 		
 		//Clear the currently present data
@@ -389,8 +385,9 @@ public class ProgramWindow {
 		//Add in data from completed transactions
 		ArrayList<Transaction> completed = ticketManager.getCompletedTransactions();
 		for(Transaction t : completed) {
-			model.addRow(new Object[]{t.transactionId, t.lotUsed.lotName, t.timeEnteredDate, t.timeExitedDate, String.format("$%0.2f", t.getTotalCost())});
+			model.addRow(new Object[]{t.transactionId, t.lotUsed.lotName, t.sectionUsed.getName(), t.timeEnteredDate, t.timeExitedDate, String.format("$%.2f", t.getTotalCost())});
 		}
+		
 	}
 	
 	/**
@@ -403,11 +400,23 @@ public class ProgramWindow {
 	 * @param e
 	 */
 	private void enterLotButtonPressed(ActionEvent event) {
+		
+		//Make sure that there is a lot available
+		if(ticketManager.getNumLots() < 1) {
+			JOptionPane.showMessageDialog(
+					window,
+					"No active terminals. Please contact parking lot manager.",
+					"Error",
+					JOptionPane.ERROR_MESSAGE
+			);
+			return;
+		}
+		
 		int lotIndex = terminalSelectBox.getSelectedIndex();
 		ParkingLot activeLot = ticketManager.getLots().get(lotIndex);
 		
 		Card card = activeLot.scanCard();
-        boolean success = ticketManager.startTransaction(card, terminalSelectBox.getSelectedIndex());
+        boolean success = ticketManager.startTransaction(card, lotIndex);
         
         if(success){
         	(new Thread(()->{
@@ -428,6 +437,7 @@ public class ProgramWindow {
             		JOptionPane.ERROR_MESSAGE
             );
         }
+        
 	}
 	
 	/**
@@ -439,6 +449,18 @@ public class ProgramWindow {
 	 * @param e
 	 */
 	private void exitLotButtonPressed(ActionEvent event) {
+		
+		//Make sure that there is a lot available
+		if(ticketManager.getNumLots() < 1) {
+			JOptionPane.showMessageDialog(
+					window,
+					"No active terminals. Please contact parking lot manager.",
+					"Error",
+					JOptionPane.ERROR_MESSAGE
+			);
+			return;
+		}
+		
 		int lotIndex = terminalSelectBox.getSelectedIndex();
 		ParkingLot activeLot = ticketManager.getLots().get(lotIndex);
 		
@@ -462,6 +484,7 @@ public class ProgramWindow {
             		JOptionPane.ERROR_MESSAGE
             );
         }
+        
 	}
 	
 	/**
@@ -472,6 +495,7 @@ public class ProgramWindow {
 	 * @param e
 	 */
 	private void addLotButtonPressed(ActionEvent e) {
+		
 		String lotName = newLotName.getText();
 		if (lotName.length() == 0) return;
 		
@@ -481,9 +505,11 @@ public class ProgramWindow {
 		
 		ticketManager.addLot(newLot);
 		
-		addLotToTableModel (lotsModel, newLot);
+		addLotToTableModel(lotsModel, newLot);
 		
 		newLotName.setText("");
+		
+		updateTerminalSelectBox();
 		
 	}
 	
@@ -499,18 +525,27 @@ public class ProgramWindow {
 	private void addSectionButtonPressed(ActionEvent e) {
 		
 		String sectionName = newSectionName.getText();
-		int sectionSpots = Integer.parseInt(newSectionSpots.getText());
+		int sectionSpots;
+		try {
+			sectionSpots = Integer.parseInt(newSectionSpots.getText());
+		} catch (NumberFormatException nfe) {
+			JOptionPane.showMessageDialog(
+					window,
+					"Please enter a positive whole number for the number of spots in the section.",
+					"Error",
+					JOptionPane.INFORMATION_MESSAGE
+			);
+			return;
+		}
 		
 		if (sectionName.length() == 0) return;
 		
-		ParkingLot lotToShow;
-		if (activeLotsTable.getSelectedRow() > 0)
-			lotToShow = ticketManager.getLots().get(activeLotsTable.getSelectedRow());
-		else
-			lotToShow = ticketManager.getLots().get(0);
+		int selectedRow = activeLotsTable.getSelectedRow() == -1 ? 0 : activeLotsTable.getSelectedRow();
+		ParkingLot lotToShow = ticketManager.getLots().get(selectedRow);
 		
 		LotSection newSection = new LotSection(sectionName, sectionSpots);
 		lotToShow.addSection(newSection);
+		refreshLotSections(selectedRow);
 		
 		addSectionToTableModel(sectionsModel, newSection);
 		
@@ -531,34 +566,45 @@ public class ProgramWindow {
 	 */
 	private void removeLotButtonPressed(ActionEvent e) {
 		
+		//Get the select index and make sure that it is not -1 (no row selected)
+		int removeIndex = activeLotsTable.getSelectedRow();
+		if(removeIndex == -1) {
+			JOptionPane.showMessageDialog(
+					window,
+					"Please select a lot to remove.",
+					"Error",
+					JOptionPane.INFORMATION_MESSAGE
+			);
+			return;
+		}
+		ticketManager.removeLot(ticketManager.getLots().get(removeIndex));
 		
-		ticketManager.removeLot(ticketManager.getLots().get(activeLotsTable.getSelectedRow()));
-		
+		//Clear the table
 		activeLotsTable.getSelectionModel().removeListSelectionListener(viewSectionsListener);
 		clearTableModel(lotsModel);
 		
-		
-		
-		for (int i = 0; i < ticketManager.getLots().size(); i++) 
+		//Reload entries
+		for (int i = 0; i < ticketManager.getLots().size(); i++) {
 			addLotToTableModel(lotsModel, ticketManager.getLots().get(i));
-		
+		}
 		
 		ParkingLot lotToShow;
 		if (ticketManager.getLots().size() > 0)
 			lotToShow = ticketManager.getLots().get(0);
 		else {
 			clearTableModel(sectionsModel);
+			activeLotsTable.getSelectionModel().addListSelectionListener(viewSectionsListener);
+			updateTerminalSelectBox();
 			return;
 		}
 		
-		
-		
 		clearTableModel(sectionsModel);
-		for (int i = 0; i < lotToShow.getNumSections(); i++) 
+		for (int i = 0; i < lotToShow.getNumSections(); i++) {
 			addSectionToTableModel(sectionsModel, lotToShow.sections.get(i));
+		}
 		
 		activeLotsTable.getSelectionModel().addListSelectionListener(viewSectionsListener);
-		
+		updateTerminalSelectBox();
 	}
 	
 	/**
@@ -573,7 +619,16 @@ public class ProgramWindow {
 	 */
 	private void removeLotSectionButtonPressed(ActionEvent e) {
 		
-		
+		//Make sure there is at least 1 existing lot
+		if(ticketManager.getLots().size() == 0) {
+			JOptionPane.showMessageDialog(
+					window,
+					"Please add at least one lot to manage sections.",
+					"Error",
+					JOptionPane.INFORMATION_MESSAGE
+			);
+			return;
+		}
 		
 		ParkingLot lotToShow;
 		int lotIndex = 0;
@@ -586,28 +641,62 @@ public class ProgramWindow {
 			lotToShow = ticketManager.getLots().get(0);
 		}
 		
+		//Get the select index and make sure that it is not -1 (no row selected)
+		int removeIndex = lotSectionsTable.getSelectedRow(); 
+		if(removeIndex == -1) {
+			JOptionPane.showMessageDialog(
+					window,
+					"Please select a section to remove.",
+					"Error",
+					JOptionPane.INFORMATION_MESSAGE
+			);
+			return;
+		}
+		
 		ticketManager.getLots().get(lotIndex).removeSection(lotToShow.sections.get(lotSectionsTable.getSelectedRow()));
 		sectionsModel.removeRow(lotSectionsTable.getSelectedRow());
+		refreshLotSections(lotIndex);
 		
 		clearTableModel(sectionsModel);
-		for (int i = 0; i < lotToShow.getNumSections(); i++) 
+		for (int i = 0; i < lotToShow.getNumSections(); i++) {
 			addSectionToTableModel(sectionsModel, lotToShow.sections.get(i));
+		}
+		
+	}
+	
+	private void refreshLotSections(int id) {
+		
+		ParkingLot lot = ticketManager.getLots().get(id);
+        String sectionArrayString = "", openSectionArrayString = "";
+        for (int j = 0; j < lot.sections.size(); j++) {
+        	sectionArrayString += lot.sections.get(j).getName() + (j < lot.getNumSections() - 1 ? ", " : "");
+        }
+        
+        for (int j = 0; j < lot.sections.size(); j++) {
+        	if (lot.sections.get(j).hasOpenSpots())
+        		openSectionArrayString += lot.sections.get(j).getName() + (j < lot.getNumOpenSections() - 1 ? ", " : "");
+        }
+		
+		activeLotsTable.getModel().setValueAt(sectionArrayString, id, 2);
+		activeLotsTable.getModel().setValueAt(openSectionArrayString, id, 3);
 		
 	}
 	
 	private void showSectionsForLot(int id) {
-		ParkingLot lotToShow;
-		lotToShow = ticketManager.getLots().get(activeLotsTable.getSelectedRow());
+		
+		int showIndex = activeLotsTable.getSelectedRow() == -1 ? 0 : activeLotsTable.getSelectedRow();
+		ParkingLot lotToShow = ticketManager.getLots().get(showIndex);
 		
 		clearTableModel(sectionsModel);
-		for (int i = 0; i < lotToShow.getNumSections(); i++) 
+		for (int i = 0; i < lotToShow.getNumSections(); i++) {
 			addSectionToTableModel(sectionsModel, lotToShow.sections.get(i));
+		}
+		
 	}
 	
-	
-	private void addLotToTableModel (DefaultTableModel model, ParkingLot lot) {
+	private void addLotToTableModel(DefaultTableModel model, ParkingLot lot) {
+		
         Object rowData[] = new Object[5];
-        
         
         String sectionArrayString = "", openSectionArrayString = "";
         for (int j = 0; j < lot.sections.size(); j++) {
@@ -625,12 +714,12 @@ public class ProgramWindow {
         rowData[3] = openSectionArrayString;
         rowData[4] = lot.hourlyRate;
         model.addRow(rowData);
+        
     }
 	
 	private void addSectionToTableModel(DefaultTableModel model, LotSection section) {
 		Object rowData[] = new Object[4];
         
-        	
         rowData[0] = section.getId();
         rowData[1] = section.getName();
         rowData[2] = section.getTotalSpots();
@@ -639,8 +728,21 @@ public class ProgramWindow {
 	}
 	
 	private void clearTableModel(DefaultTableModel model) {
-		
 			model.setRowCount(0);
+	}
+	
+	private void updateTerminalSelectBox() {
+		//Check for no lots
+		if(ticketManager.getNumLots() == 0) {
+			terminalSelectBox.setModel(new DefaultComboBoxModel<String>(new String[]{"No terminals available."}));
+			return;
+		}
+		
+		String[] terminals = new String[ticketManager.getNumLots()];
+		for(int i = 0; i < terminals.length; ++i) {
+			terminals[i] = ticketManager.getLots().get(i).lotName;
+		}
+		terminalSelectBox.setModel(new DefaultComboBoxModel<String>(terminals));
 	}
 	
 }

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class ParkingLot implements Hardware {
 	
@@ -165,7 +166,7 @@ public class ParkingLot implements Hardware {
 		System.out.println("Ticket ID: " + transaction.transactionId);
 		System.out.println("Lot Assigned: " + transaction.lotUsed.lotName);
 		System.out.println("Section: " + transaction.sectionUsed.getName());
-		System.out.println("Time Assigned: " + transaction.timeEnteredInMS);
+		System.out.println("Arrival Time: " + transaction.timeEnteredDate);
 		System.out.println("----------------------------------------");
 	}
 
@@ -175,7 +176,7 @@ public class ParkingLot implements Hardware {
 		System.out.println("Ticket ID: " + completed.transactionId);
 		System.out.println("Lot Used: " + completed.lotUsed.lotName);
 		System.out.println("Section: " + completed.sectionUsed.getName());
-		System.out.println("Time Used: " + completed.getTimeDifferenceInMS());
+		System.out.println("Departure Time: " + completed.timeExitedDate);
 		System.out.println("----------------------------------------");
 	}
 	

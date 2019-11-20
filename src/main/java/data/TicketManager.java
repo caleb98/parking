@@ -39,7 +39,7 @@ public class TicketManager {
 	 */
 	public boolean startTransaction(Card card, int lotIndex) {		
 		//get open lot, and check if valid
-		ParkingLot openLot = getOpenLot();
+		ParkingLot openLot = lots.get(lotIndex);
 		if(openLot == null) return false;
 		
 		LotSection openSection = openLot.getOpenLotSection();
