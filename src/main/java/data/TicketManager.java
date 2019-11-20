@@ -10,6 +10,7 @@ public class TicketManager {
 	private ArrayList<Transaction> completedTransactions = new ArrayList<Transaction>();
 	
 	public boolean addLot(ParkingLot lot) {
+		lot.lotId = lots.size();
 		return lots.add(lot);
 	}
 	

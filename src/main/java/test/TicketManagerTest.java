@@ -4,11 +4,15 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import data.ParkingLot;
 import data.TicketManager;
 
+@TestMethodOrder(OrderAnnotation.class)
 class TicketManagerTest {
 
 	private static TicketManager manager = new TicketManager();
@@ -18,6 +22,7 @@ class TicketManagerTest {
 	private static int numTestLots = 100;
 	
 	@Test
+	@Order(1)
 	void testAddLot() {
 		//Get number of lots before adding
 		int numLots = manager.getNumLots();
@@ -29,6 +34,7 @@ class TicketManagerTest {
 	}
 	
 	@Test 
+	@Order(2)
 	void testRemovePresentLot() {
 		//Get number of lots before removing
 		int numLots = manager.getNumLots();
@@ -40,6 +46,7 @@ class TicketManagerTest {
 	}
 	
 	@Test
+	@Order(3)
 	void testRemoveNonPresentLot() {
 		//Get number of lots before removing
 		int numLots = manager.getNumLots();
@@ -51,6 +58,7 @@ class TicketManagerTest {
 	}
 	
 	@Test
+	@Order(4)
 	void testAllMultipleLots() {
 		//Get the number of lots before adding
 		int numLots = manager.getNumLots();
@@ -63,8 +71,9 @@ class TicketManagerTest {
 		//Make sure that all the lots were added
 		assertEquals(numLots + numTestLots, manager.getNumLots(), "Number of total lots should be " + numLots + " + " + numTestLots);
 	}
-	
+
 	@Test
+	@Order(5)
 	void testRemoveAllLots() {
 		//Remove all lots, checking ids as we go
 		while(manager.getNumLots() > 0) {
