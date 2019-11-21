@@ -13,10 +13,10 @@ public class ParkingLot implements Hardware {
 	 */
 	private static final float DEFAULT_LOT_RATE = 100.00f;
 	
-	public ArrayList<LotSection> sections = new ArrayList<>();
-	public float hourlyRate;
-	public int lotId;
-	public String lotName;
+	private ArrayList<LotSection> sections = new ArrayList<>();
+	private float hourlyRate;
+	private int lotId;
+	private String lotName;
 	
 	private boolean gateOpen = false;
 	
@@ -28,6 +28,37 @@ public class ParkingLot implements Hardware {
 		this.lotId = lotId;
 		this.lotName = lotName;
 		hourlyRate = rate;
+	}
+	
+	/**
+	 * @return the dollar-amount charger per hour of parking
+	 */
+	public float getHourlyRate() {
+		return hourlyRate;
+	}
+	
+	/**
+	 * Sets the dollar-amount charged per hour of parking
+	 * @param rate rate per hour
+	 */
+	public void setHourlyRate(float rate) {
+		hourlyRate = rate;
+	}
+	
+	public int getLotId() {
+		return lotId;
+	}
+	
+	public void setId(int id) {
+		lotId = id;
+	}
+	
+	public String getLotName() {
+		return lotName;
+	}
+	
+	public void setLotName(String name) {
+		lotName = name;
 	}
 	
 	/**
@@ -176,7 +207,7 @@ public class ParkingLot implements Hardware {
 		System.out.println("Ticket ID: " + completed.transactionId);
 		System.out.println("Lot Used: " + completed.lotUsed.lotName);
 		System.out.println("Section: " + completed.sectionUsed.getName());
-		System.out.println("Departure Time: " + completed.timeExitedDate);
+		System.out.println("Departure Time: " + completed.getTimeExitedDate());
 		System.out.println("----------------------------------------");
 	}
 	

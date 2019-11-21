@@ -48,10 +48,10 @@ class EnterExitTest {
 	@Order(2)
 	void setOpenTest() {
 	    for (i = 0; i < 50; i++)
-	    	ticketManager.getLots().get(0).sections.get(0).setOpen();
+	    	ticketManager.getLots().get(0).getAllSections().get(0).setOpen();
 	    
 	    // Assert that there are 50 open spots
-	    assertEquals(ticketManager.getLots().get(0).sections.get(0).getOpenSpots(), 50);
+	    assertEquals(ticketManager.getLots().get(0).getAllSections().get(0).getOpenSpots(), 50);
 	    
 	}
 	
@@ -59,13 +59,13 @@ class EnterExitTest {
 	@Order(3)
 	void setAllOpenTest() {
 	    i = 0;
-	    while (ticketManager.getLots().get(0).sections.get(0).getOpenSpots() != ticketManager.getLots().get(0).sections.get(0).getTotalSpots()) {
-	    	ticketManager.getLots().get(0).sections.get(0).setOpen();
+	    while (ticketManager.getLots().get(0).getAllSections().get(0).getOpenSpots() != ticketManager.getLots().get(0).getAllSections().get(0).getTotalSpots()) {
+	    	ticketManager.getLots().get(0).getAllSections().get(0).setOpen();
 	    	i++;
 	    }
 	    
 	    // Assert that all 200 spots are open
-	    assertEquals(ticketManager.getLots().get(0).sections.get(0).getOpenSpots(), 200);
+	    assertEquals(ticketManager.getLots().get(0).getAllSections().get(0).getOpenSpots(), 200);
 	}
 	
 	@Test
@@ -76,7 +76,7 @@ class EnterExitTest {
 	    }
 	    
 	    assertThrows(IndexOutOfBoundsException.class, () -> {
-	    	ticketManager.getLots().get(0).sections.get(0).fillSpot();
+	    	ticketManager.getLots().get(0).getAllSections().get(0).fillSpot();
 	    });
 	}
 	
@@ -84,13 +84,13 @@ class EnterExitTest {
 	@Order(5)
 	void emptyLotExceptionTest() {
 	    i = 0;
-		while (ticketManager.getLots().get(0).sections.get(0).getOpenSpots() != ticketManager.getLots().get(0).sections.get(0).getTotalSpots()) {
-			ticketManager.getLots().get(0).sections.get(0).setOpen();
+		while (ticketManager.getLots().get(0).getAllSections().get(0).getOpenSpots() != ticketManager.getLots().get(0).getAllSections().get(0).getTotalSpots()) {
+			ticketManager.getLots().get(0).getAllSections().get(0).setOpen();
 		    i++;
 		}
 	    
 		assertThrows(IndexOutOfBoundsException.class, () -> {
-	    	ticketManager.getLots().get(0).sections.get(0).setOpen();
+	    	ticketManager.getLots().get(0).getAllSections().get(0).setOpen();
 		});
 	}
 

@@ -85,7 +85,7 @@ class TicketManagerTest {
 	@AfterEach
 	void testLotIDs() {
 		for(int i = 0; i < manager.getNumLots(); ++i) {
-			assertEquals(i, manager.getLots().get(i).lotId, "ID of lot " + manager.getLots().get(i).lotName + " should be " + i);
+			assertEquals(i, manager.getLots().get(i).getLotId(), "ID of lot " + manager.getLots().get(i).getLotName() + " should be " + i);
 		}
 	}
 

@@ -10,14 +10,14 @@ public class TicketManager {
 	private ArrayList<Transaction> completedTransactions = new ArrayList<Transaction>();
 	
 	public boolean addLot(ParkingLot lot) {
-		lot.lotId = lots.size();
+		lot.setId(lots.size());
 		return lots.add(lot);
 	}
 	
 	public boolean removeLot(ParkingLot lot) {
 		boolean success = lots.remove(lot);
 		for(int i = 0; i < lots.size(); ++i) {
-			lots.get(i).lotId = i;
+			lots.get(i).setId(i);
 		}
 		
 		return success;
@@ -45,7 +45,7 @@ public class TicketManager {
 		LotSection openSection = openLot.getOpenLotSection();
 		
 		// create new transaction
-		Transaction transaction = new Transaction(completedTransactions.size() + outstandingTransactions.size(), openLot.hourlyRate, openLot, openSection);
+		Transaction transaction = new Transaction(completedTransactions.size() + outstandingTransactions.size(), openLot.getHourlyRate(), openLot, openSection);
 		
 		// fill lot section spot
 		transaction.sectionUsed.fillSpot();
@@ -77,14 +77,13 @@ public class TicketManager {
 		
 		// Charge the balance to the card
 		//TODO: calculate amount to charge people for time parked.
-		PaymentManager.subtractBalance(0, card);
-		transaction.timeExitedInMS = System.currentTimeMillis();
+		transaction.closeTransaction();
+		PaymentManager.subtractBalance(transaction.getTotalCost(), card);
 		
 		// Remove the transaction from outstanding and insert it in the 
 		// completed transactions list, dumping card info.
 		outstandingTransactions.remove(transactionId);
 		completedTransactions.add(transaction);
-		transaction.closeTransaction();
 		
 		// Set an open spot in the lot where this customer was parked.
 		transaction.sectionUsed.setOpen();

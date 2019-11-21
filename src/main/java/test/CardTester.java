@@ -67,6 +67,6 @@ class CardTester {
 	@Test
 	void goodCardTest() {
 		Card lastOne = new Card(name, goodCardNumber, goodExpDateTwo, goodSecCode);
-		assertTrue(lastOne.reject); 
+		assertTrue(!lastOne.reject); 
 	}//end goodCardTest
 }//end test class

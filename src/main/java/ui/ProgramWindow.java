@@ -277,7 +277,7 @@ public class ProgramWindow {
 		sectionsModel.setColumnIdentifiers(new String[] {"ID", "Section Name", "Total Spots", "Open Spots"});
 		
 		for (int i = 0; i < ticketManager.getLots().get(0).getNumSections(); i++) {
-			addSectionToTableModel(sectionsModel, ticketManager.getLots().get(0).sections.get(i));
+			addSectionToTableModel(sectionsModel, ticketManager.getLots().get(0).getAllSections().get(i));
 		}
 		
 		lotSectionsTable.setModel(sectionsModel);
@@ -375,7 +375,7 @@ public class ProgramWindow {
 		HashMap<Integer, Pair<Transaction, Card>> actives = ticketManager.getOutstandingTransactions();
 		for(Integer i : actives.keySet()) {
 			Transaction t = actives.get(i).a;
-			model.addRow(new Object[]{t.transactionId, t.lotUsed.lotName, t.sectionUsed.getName(), t.timeEnteredDate});
+			model.addRow(new Object[]{t.transactionId, t.lotUsed.getLotName(), t.sectionUsed.getName(), t.timeEnteredDate});
 		}
 		
 		//Clear the currently present data
@@ -385,7 +385,14 @@ public class ProgramWindow {
 		//Add in data from completed transactions
 		ArrayList<Transaction> completed = ticketManager.getCompletedTransactions();
 		for(Transaction t : completed) {
-			model.addRow(new Object[]{t.transactionId, t.lotUsed.lotName, t.sectionUsed.getName(), t.timeEnteredDate, t.timeExitedDate, String.format("$%.2f", t.getTotalCost())});
+			model.addRow(new Object[]{
+					t.transactionId, 
+					t.lotUsed.getLotName(), 
+					t.sectionUsed.getName(), 
+					t.timeEnteredDate, 
+					t.getTimeExitedDate(), 
+					String.format("$%.2f", t.getTotalCost())
+			});
 		}
 		
 	}
@@ -438,6 +445,8 @@ public class ProgramWindow {
             );
         }
         
+        refreshLotSectionTable(activeLot);
+        
 	}
 	
 	/**
@@ -484,6 +493,8 @@ public class ProgramWindow {
             		JOptionPane.ERROR_MESSAGE
             );
         }
+        
+        refreshLotSectionTable(activeLot);
         
 	}
 	
@@ -556,7 +567,7 @@ public class ProgramWindow {
 		
 		LotSection newSection = new LotSection(sectionName, sectionSpots);
 		lotToShow.addSection(newSection);
-		refreshLotSections(selectedRow);
+		updateLotSectionInParkingLotTable(selectedRow);
 		
 		addSectionToTableModel(sectionsModel, newSection);
 		
@@ -588,6 +599,20 @@ public class ProgramWindow {
 			);
 			return;
 		}
+		
+		//Make sure that no cars are parked in this lot
+		for(LotSection section : ticketManager.getLots().get(removeIndex).getAllSections()) {
+			if(section.getOpenSpots() != section.getTotalSpots()) {
+				JOptionPane.showMessageDialog(
+						window,
+						"Unable to remove lot containing parked cars.\n"
+						+ "Wait until all cars have exited to remove.",
+						"Error",
+						JOptionPane.INFORMATION_MESSAGE
+				);
+			}
+		}
+		
 		ticketManager.removeLot(ticketManager.getLots().get(removeIndex));
 		
 		//Clear the table
@@ -609,13 +634,16 @@ public class ProgramWindow {
 			return;
 		}
 		
+		refreshLotSectionTable(lotToShow);
+		updateTerminalSelectBox();
+	}
+	
+	private void refreshLotSectionTable(ParkingLot lotToShow) {
 		clearTableModel(sectionsModel);
 		for (int i = 0; i < lotToShow.getNumSections(); i++) {
-			addSectionToTableModel(sectionsModel, lotToShow.sections.get(i));
+			addSectionToTableModel(sectionsModel, lotToShow.getAllSections().get(i));
 		}
-		
 		activeLotsTable.getSelectionModel().addListSelectionListener(viewSectionsListener);
-		updateTerminalSelectBox();
 	}
 	
 	/**
@@ -643,7 +671,6 @@ public class ProgramWindow {
 		
 		ParkingLot lotToShow;
 		int lotIndex = 0;
-		
 		if (activeLotsTable.getSelectedRow() > 0) {
 			lotIndex = activeLotsTable.getSelectedRow();
 			lotToShow = ticketManager.getLots().get(activeLotsTable.getSelectedRow());
@@ -664,28 +691,41 @@ public class ProgramWindow {
 			return;
 		}
 		
-		ticketManager.getLots().get(lotIndex).removeSection(lotToShow.sections.get(lotSectionsTable.getSelectedRow()));
-		sectionsModel.removeRow(lotSectionsTable.getSelectedRow());
-		refreshLotSections(lotIndex);
+		//Make sure that the selected lot doesn't have any parked cars
+		LotSection removeSection = lotToShow.getAllSections().get(removeIndex);
+		if(removeSection.getOpenSpots() != removeSection.getTotalSpots()) {
+			JOptionPane.showMessageDialog(
+					window,
+					"Unable to remove section containing parked cars.\n"
+					+ "Please wait until all cars have exited the lot section to remove.",
+					"Error",
+					JOptionPane.INFORMATION_MESSAGE
+			);
+			return;
+		}
+		
+		lotToShow.removeSection(lotToShow.getAllSections().get(removeIndex));
+		sectionsModel.removeRow(removeIndex);
+		updateLotSectionInParkingLotTable(lotIndex);
 		
 		clearTableModel(sectionsModel);
 		for (int i = 0; i < lotToShow.getNumSections(); i++) {
-			addSectionToTableModel(sectionsModel, lotToShow.sections.get(i));
+			addSectionToTableModel(sectionsModel, lotToShow.getAllSections().get(i));
 		}
 		
 	}
 	
-	private void refreshLotSections(int id) {
+	private void updateLotSectionInParkingLotTable(int id) {
 		
 		ParkingLot lot = ticketManager.getLots().get(id);
         String sectionArrayString = "", openSectionArrayString = "";
-        for (int j = 0; j < lot.sections.size(); j++) {
-        	sectionArrayString += lot.sections.get(j).getName() + (j < lot.getNumSections() - 1 ? ", " : "");
+        for (int j = 0; j < lot.getAllSections().size(); j++) {
+        	sectionArrayString += lot.getAllSections().get(j).getName() + (j < lot.getNumSections() - 1 ? ", " : "");
         }
         
-        for (int j = 0; j < lot.sections.size(); j++) {
-        	if (lot.sections.get(j).hasOpenSpots())
-        		openSectionArrayString += lot.sections.get(j).getName() + (j < lot.getNumOpenSections() - 1 ? ", " : "");
+        for (int j = 0; j < lot.getAllSections().size(); j++) {
+        	if (lot.getAllSections().get(j).hasOpenSpots())
+        		openSectionArrayString += lot.getAllSections().get(j).getName() + (j < lot.getNumOpenSections() - 1 ? ", " : "");
         }
 		
 		activeLotsTable.getModel().setValueAt(sectionArrayString, id, 2);
@@ -700,7 +740,7 @@ public class ProgramWindow {
 		
 		clearTableModel(sectionsModel);
 		for (int i = 0; i < lotToShow.getNumSections(); i++) {
-			addSectionToTableModel(sectionsModel, lotToShow.sections.get(i));
+			addSectionToTableModel(sectionsModel, lotToShow.getAllSections().get(i));
 		}
 		
 	}
@@ -710,20 +750,20 @@ public class ProgramWindow {
         Object rowData[] = new Object[5];
         
         String sectionArrayString = "", openSectionArrayString = "";
-        for (int j = 0; j < lot.sections.size(); j++) {
-        	sectionArrayString += lot.sections.get(j).getName() + (j < lot.getNumSections() - 1 ? ", " : "");
+        for (int j = 0; j < lot.getAllSections().size(); j++) {
+        	sectionArrayString += lot.getAllSections().get(j).getName() + (j < lot.getNumSections() - 1 ? ", " : "");
         }
         
-        for (int j = 0; j < lot.sections.size(); j++) {
-        	if (lot.sections.get(j).hasOpenSpots())
-        		openSectionArrayString += lot.sections.get(j).getName() + (j < lot.getNumOpenSections() - 1 ? ", " : "");
+        for (int j = 0; j < lot.getAllSections().size(); j++) {
+        	if (lot.getAllSections().get(j).hasOpenSpots())
+        		openSectionArrayString += lot.getAllSections().get(j).getName() + (j < lot.getNumOpenSections() - 1 ? ", " : "");
         }
         	
-        rowData[0] = lot.lotId;
-        rowData[1] = lot.lotName;
+        rowData[0] = lot.getLotId();
+        rowData[1] = lot.getLotName();
         rowData[2] = sectionArrayString;
         rowData[3] = openSectionArrayString;
-        rowData[4] = lot.hourlyRate;
+        rowData[4] = lot.getHourlyRate();
         model.addRow(rowData);
         
     }
@@ -751,7 +791,7 @@ public class ProgramWindow {
 		
 		String[] terminals = new String[ticketManager.getNumLots()];
 		for(int i = 0; i < terminals.length; ++i) {
-			terminals[i] = ticketManager.getLots().get(i).lotName;
+			terminals[i] = ticketManager.getLots().get(i).getLotName();
 		}
 		terminalSelectBox.setModel(new DefaultComboBoxModel<String>(terminals));
 	}

@@ -38,7 +38,7 @@ class TransactionTest {
         lot.addSection(new LotSection("A", 50));
         lot.addSection(new LotSection("B", 25));
 		LotSection lotSection = lot.getOpenLotSection();
-        transcaction = new Transaction(0, lot.hourlyRate, lot, lotSection);
+        transcaction = new Transaction(0, lot.getHourlyRate(), lot, lotSection);
         assertTrue(transcaction != null);
     }
 
@@ -49,8 +49,8 @@ class TransactionTest {
         lot.addSection(new LotSection("A", 50));
         lot.addSection(new LotSection("B", 25));
 		LotSection lotSection = lot.getOpenLotSection();
-        transcaction = new Transaction(0, lot.hourlyRate, lot, lotSection);
-        assertEquals(transcaction.getHourlyRate(), lot.hourlyRate);
+        transcaction = new Transaction(0, lot.getHourlyRate(), lot, lotSection);
+        assertEquals(transcaction.hourlyRate, lot.getHourlyRate());
 	}
 
 	@Test
@@ -60,11 +60,11 @@ class TransactionTest {
         lot.addSection(new LotSection("A", 50));
         lot.addSection(new LotSection("B", 25));
 		LotSection lotSection = lot.getOpenLotSection();
-        transcaction = new Transaction(0, lot.hourlyRate, lot, lotSection);
-        double savedRate = transcaction.getHourlyRate();
-        lot.hourlyRate = 3.5f;
-        assertEquals(savedRate, transcaction.getHourlyRate());
-        assertTrue(transcaction.getHourlyRate() != lot.hourlyRate);
+        transcaction = new Transaction(0, lot.getHourlyRate(), lot, lotSection);
+        double savedRate = transcaction.hourlyRate;
+        lot.setHourlyRate(3.5f);
+        assertEquals(savedRate, transcaction.hourlyRate);
+        assertTrue(transcaction.hourlyRate != lot.getHourlyRate());
     }
 
 	@Test
@@ -74,8 +74,11 @@ class TransactionTest {
         lot.addSection(new LotSection("A", 50));
         lot.addSection(new LotSection("B", 25));
 		LotSection lotSection = lot.getOpenLotSection();
-        transcaction = new Transaction(0, lot.hourlyRate, lot, lotSection);
-        transcaction.timeEnteredInMS = transcaction.timeEnteredInMS - (1000 * 60 * 60 * 3);
+        transcaction = new Transaction(0, lot.getHourlyRate(), lot, lotSection);
+        //Sleep to simulate parking time
+        try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {}
         transcaction.closeTransaction();
         assertTrue(transcaction.getTotalCost() > 0);
     }

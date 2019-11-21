@@ -7,15 +7,15 @@ public class Transaction {
 	public final int transactionId;
 	public final ParkingLot lotUsed;
 	public final LotSection sectionUsed;
-	public long timeEnteredInMS;
+	public final long timeEnteredInMS;
 	public final Date timeEnteredDate;
+	public final float hourlyRate;
 	
-	public long timeExitedInMS = 0;
-	public Date timeExitedDate = null;
-	private double totalCost;
-	private double hourlyRate;
+	private long timeExitedInMS = 0;
+	private Date timeExitedDate = null;
+	private float totalCost;
 	
-	public Transaction(int id, double hourlyRate, ParkingLot lotUsed, LotSection sectionUsed) {
+	public Transaction(int id, float hourlyRate, ParkingLot lotUsed, LotSection sectionUsed) {
 		transactionId = id;
 		this.lotUsed = lotUsed;
 		this.sectionUsed = sectionUsed;
@@ -31,11 +31,15 @@ public class Transaction {
 		totalCost = hourlyRate * (timeExitedInMS - timeEnteredInMS) / 1000 / 60 / 60;
 	}
 
-	public double getHourlyRate(){
-		return hourlyRate;
+	public long getTimeExitedMS() {
+		return timeExitedInMS;
 	}
-
-	public double getTotalCost(){
+	
+	public Date getTimeExitedDate() {
+		return timeExitedDate;
+	}
+	
+	public float getTotalCost(){
 		return totalCost;
 	}
 	
