@@ -1,10 +1,14 @@
 package data;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
+
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 public class ParkingLot implements Hardware {
 	
@@ -129,34 +133,128 @@ public class ParkingLot implements Hardware {
 	
 	@Override
 	public Card scanCard(){
-		String name = "";
-		String cardNum = "";
-		String cvv = "";
-		String expirationDate = "";
 		
-		try{
-			InputStreamReader isr = new InputStreamReader(System.in);
-			BufferedReader br = new BufferedReader(isr);
+		//UI Display
+		JPanel inputPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints con = new GridBagConstraints();
+		con.insets = new Insets(5, 0, 0, 5);
+		con.fill = GridBagConstraints.HORIZONTAL;
+		
+		con.weightx = 0;
+		con.gridx = 0;
+		con.gridy = 0;
+		inputPanel.add(new JLabel("Name:"), con);
+		
+		con.weightx = 1;
+		con.gridx = 1;
+		JTextField nameEntry = new JTextField();
+		inputPanel.add(nameEntry, con);
+		
+		con.weightx = 0;
+		con.gridx = 0;
+		con.gridy = 1;
+		inputPanel.add(new JLabel("Card No.:"), con);
+		
+		con.weightx = 1;
+		con.gridx = 1;
+		JTextField cardNumEntry = new JTextField("4242 4242 4242 4242");
+		inputPanel.add(cardNumEntry, con);
+		
+		con.weightx = 0;
+		con.gridx = 0;
+		con.gridy = 2;
+		inputPanel.add(new JLabel("Card CVV:"), con);
+		
+		con.weightx = 1;
+		con.gridx = 1;
+		JTextField cardCVVEntry = new JTextField("XXX");
+		inputPanel.add(cardCVVEntry, con);
+		
+		con.weightx = 0;
+		con.gridx = 0;
+		con.gridy = 3;
+		inputPanel.add(new JLabel("Expiry Date:"), con);
+		
+		con.weightx = 1;
+		con.gridx = 1;
+		JTextField expEntry = new JTextField("MM/YY");
+		inputPanel.add(expEntry, con);
 			
-			System.out.print("Enter your name: ");
-			name = br.readLine();
+		Card scanned = null;
+		
+		while(scanned == null) {
+			int result = JOptionPane.showConfirmDialog(
+					null, 
+					inputPanel,
+					"Please Enter Card Info",
+					JOptionPane.DEFAULT_OPTION
+			);
 			
-			System.out.print("Enter Card Number: ");
-			cardNum = br.readLine();
-			
-			System.out.print("Enter CVV of Card: ");
-			cvv= br.readLine();
-			
-			System.out.print("Enter expiration date: ");
-			expirationDate = br.readLine();
-			
-		}catch(IOException e){
-			e.printStackTrace();
+			if(result == JOptionPane.OK_OPTION) {
+				
+				//Read string values from the text areas
+				String name = nameEntry.getText();
+				String number = cardNumEntry.getText().replaceAll("[ -]", ""); //Replace dashes or spaces in between card numbers
+				String exp = expEntry.getText(); 
+				String cvv = cardCVVEntry.getText();
+				
+				//Make sure that a name was entered
+				if(name.length() == 0) {
+					JOptionPane.showMessageDialog(
+							null,
+							"Please enter the name printed on your card.",
+							"Invalid Card Info", 
+							JOptionPane.ERROR_MESSAGE
+					);
+					continue;
+				}
+				//Make sure card number is of correct length
+				else if(number.length() != 16) {
+					JOptionPane.showMessageDialog(
+							null,
+							"Card number not formatted properly.\nPlease check input.",
+							"Invalid Card Info", 
+							JOptionPane.ERROR_MESSAGE
+					);
+					continue;
+				}
+				//Make sure expiration date is properly formatted
+				else if(!exp.matches("[0-9]{2}/[0-9]{2}")) {
+					JOptionPane.showMessageDialog(
+							null,
+							"Expiration date must match the format \"MM/YY\"",
+							"Invalid Card Info", 
+							JOptionPane.ERROR_MESSAGE
+					);
+					continue;
+				}
+				//Make sure cvv is appropriate length
+				else if(!cvv.matches("[0-9]{3}")) {
+					JOptionPane.showMessageDialog(
+							null,
+							"Invalid CVV format.\nPlease check input.",
+							"Invalid Card Info", 
+							JOptionPane.ERROR_MESSAGE
+					);
+					continue;
+				}
+				
+				exp = exp.replace("/", "");
+				
+				scanned = new Card(name, number, exp, cvv);
+			}
+			else {
+				JOptionPane.showMessageDialog(
+						null,
+						"Please enter your card info.",
+						"Invalid Card Info", 
+						JOptionPane.ERROR_MESSAGE
+				);
+			}
 		}
-		//TODO FIX THIS
-		Card card = new Card(name, String.valueOf(cardNum), expirationDate, cvv);
-		//TODO Validate Card
-		return card;
+		
+		return scanned;
+		
 	}
 
 	@Override
@@ -178,16 +276,69 @@ public class ParkingLot implements Hardware {
      */
 	@Override
     public int scanTicket(){
+		
+		JPanel inputPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints con = new GridBagConstraints();
+		con.insets = new Insets(5, 0, 0, 5);
+		
+		con.fill = GridBagConstraints.HORIZONTAL;
+		con.gridx = 0;
+		con.gridy = 0;
+		inputPanel.add(new JLabel("Ticket ID:"), con);
+		
+		con.weightx = 1;
+		con.gridx = 1;
+		JTextField idEntry = new JTextField();
+		inputPanel.add(idEntry, con);
+		
 		int ticketId = -1;
-		try{
-			InputStreamReader isr = new InputStreamReader(System.in);
-			BufferedReader br = new BufferedReader(isr);
-			System.out.print("Enter Ticket ID: ");
-			String card = br.readLine();
-			ticketId = Integer.parseInt(card);
-		}catch(IOException e){
-			e.printStackTrace();
+		
+		while(ticketId == -1) {
+			
+			//Show dialog for inputting the ID
+			int result = JOptionPane.showConfirmDialog(
+					null,
+					inputPanel,
+					"Please Enter Ticket ID",
+					JOptionPane.DEFAULT_OPTION
+			);
+			
+			//User clicked the "Okay" button
+			if(result == JOptionPane.OK_OPTION) {
+				
+				//Get ID string
+				String idString = idEntry.getText();
+				
+				//Try to parse the integer
+				try {
+					ticketId = Integer.parseInt(idString);
+				} catch (NumberFormatException nfe) {
+					JOptionPane.showMessageDialog(
+							null,
+							"Please enter a number for the ticket ID.",
+							"Invalid Ticket ID", 
+							JOptionPane.ERROR_MESSAGE
+					);
+					continue;
+				}
+				
+				//Make sure that the value is positive (we should have no negative ID tickets!)
+				if(ticketId < 0) {
+					JOptionPane.showMessageDialog(
+							null,
+							"Ticket ID must be a positive number.",
+							"Invalid Ticket ID", 
+							JOptionPane.ERROR_MESSAGE
+					);
+					ticketId = -1; //Reset ticket ID value so we continue the while loop
+					continue;
+				}
+				
+				
+			}
+			
 		}
+		
 		return ticketId;
 	}
 
