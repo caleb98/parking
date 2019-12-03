@@ -11,27 +11,28 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class ParkingLot implements Hardware {
-	
+
 	/**
 	 * The default hourly rate for a parking lot.
 	 */
 	private static final float DEFAULT_LOT_RATE = 100.00f;
-	
+
 	private ArrayList<LotSection> sections = new ArrayList<>();
 	private float hourlyRate;
 	private int lotId;
 	private String lotName;
-	
+
 	private boolean gateOpen = false;
-	
+
 	public ParkingLot(int lotId, String lotName) {
 		this(lotId, lotName, DEFAULT_LOT_RATE);
 	}
-	
+
 	public ParkingLot(int lotId, String lotName, float rate) {
 		this.lotId = lotId;
 		this.lotName = lotName;
 		hourlyRate = rate;
+		
 	}
 	
 	/**
