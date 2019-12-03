@@ -170,7 +170,10 @@ public class TicketManager {
 		return lots;
 	}
 
-	// Loads parking lots and secitons from the XML file in the root of the project, LotStorage.xml
+	/**
+	 * Loads parking lots and secitons from the XML file in the root of the project, LotStorage.xml
+	 * @return arraylist with all parkinglots in storage
+	 */
 	public ArrayList<ParkingLot> loadLots() {
 		ArrayList<ParkingLot> result = new ArrayList<ParkingLot>();
 
@@ -275,6 +278,8 @@ public class TicketManager {
 
 			StreamResult streamResult = new StreamResult(new File("LotStorage.xml"));
 			transformer.transform(domSource, streamResult);
+
+			System.out.println("Saved successfully");
 
 		} catch (ParserConfigurationException | TransformerException | FileNotFoundException e) {
 			e.printStackTrace();

@@ -99,6 +99,7 @@ public class ProgramWindow {
 			}
 		});
 
+		// Saves data on program shutdown
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				System.out.println("Saving and exiting...");
