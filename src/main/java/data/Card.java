@@ -63,7 +63,6 @@ public class Card {
 			}//end if
 			
 		this.expirationDate = expirationDate;
-		System.out.println(this.expirationDate);
 			int cardYear = Integer.parseInt(expirationDate.substring(2,3));
 			int cardMonth = Integer.parseInt(expirationDate.substring(0,1));
 			int currentYear = Integer.parseInt((java.time.LocalDateTime.now().toString().substring(2,4))); 
