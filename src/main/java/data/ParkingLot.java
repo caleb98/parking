@@ -1,33 +1,49 @@
 package data;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
+
 public class ParkingLot implements Hardware {
-	
+
 	/**
 	 * The default hourly rate for a parking lot.
 	 */
 	private static final float DEFAULT_LOT_RATE = 100.00f;
-	
+
 	private ArrayList<LotSection> sections = new ArrayList<>();
 	private float hourlyRate;
 	private int lotId;
 	private String lotName;
-	
+
 	private boolean gateOpen = false;
-	
+
 	public ParkingLot(int lotId, String lotName) {
 		this(lotId, lotName, DEFAULT_LOT_RATE);
 	}
-	
+
 	public ParkingLot(int lotId, String lotName, float rate) {
 		this.lotId = lotId;
 		this.lotName = lotName;
 		hourlyRate = rate;
+		
 	}
 	
 	/**
