@@ -80,24 +80,13 @@ public class ProgramWindow {
 		
 		//Create the tab pane and all the sub-panels
 		tabPane = new JTabbedPane();
-		editLotsPanel = new JPanel();
-		tabPane.addTab("Edit Lots", editLotsPanel);
 		customerPanel = new JPanel();
 		tabPane.addTab("Customer Terminal", customerPanel);
+		editLotsPanel = new JPanel();
+		tabPane.addTab("Edit Lots", editLotsPanel);
 		transactionsPanel = new JPanel();
 		tabPane.addTab("Transaction Log", transactionsPanel);
 		window.add(tabPane);
-		
-		tabPane.addChangeListener(new ChangeListener() {
-			@Override
-			public void stateChanged(ChangeEvent e) {
-				if(e.getSource() instanceof JTabbedPane) {
-					if(tabPane.getSelectedIndex() == 2) {
-						updateTransactionLogs();
-					}
-				}
-			}
-		});
 
 		// Saves data on program shutdown
 		Runtime.getRuntime().addShutdownHook(new Thread() {
