@@ -34,15 +34,4 @@
       </lotSection>
     </lotSections>
   </lot>
-  <lot>
-    <lotName>East Lot</lotName>
-    <lotId>2</lotId>
-    <hourlyRate>100.0</hourlyRate>
-    <lotSections>
-      <lotSection>
-        <name>A</name>
-        <totalSpots>300</totalSpots>
-      </lotSection>
-    </lotSections>
-  </lot>
 </lots>

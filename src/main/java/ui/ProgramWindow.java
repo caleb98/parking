@@ -76,7 +76,7 @@ public class ProgramWindow {
 		this.ticketManager = ticketManager;
 		
 		//Create the window frame
-		window = new JFrame("Parking Program");
+		window = new JFrame("Parking Plus");
 		
 		//Create the tab pane and all the sub-panels
 		tabPane = new JTabbedPane();
