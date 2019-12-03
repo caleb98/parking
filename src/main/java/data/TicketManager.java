@@ -1,7 +1,9 @@
 package data;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -17,7 +19,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -34,6 +35,7 @@ public class TicketManager {
 
 	public boolean addLot(ParkingLot lot) {
 		lot.setId(lots.size());
+		saveData();
 		return lots.add(lot);
 	}
 
@@ -71,8 +73,7 @@ public class TicketManager {
 		LotSection openSection = openLot.getOpenLotSection();
 
 		// create new transaction
-		Transaction transaction = new Transaction(completedTransactions.size() + outstandingTransactions.size(),
-				openLot.getHourlyRate(), openLot, openSection);
+		Transaction transaction = new Transaction(completedTransactions.size() + outstandingTransactions.size(), openLot.getHourlyRate(), openLot, openSection);
 
 		// fill lot section spot
 		transaction.sectionUsed.fillSpot();
@@ -169,6 +170,7 @@ public class TicketManager {
 		return lots;
 	}
 
+	// Loads parking lots and secitons from the XML file in the root of the project, LotStorage.xml
 	public ArrayList<ParkingLot> loadLots() {
 		ArrayList<ParkingLot> result = new ArrayList<ParkingLot>();
 
@@ -182,11 +184,15 @@ public class TicketManager {
 
 			NodeList nodes = doc.getDocumentElement().getChildNodes();
 
+			// For each parking lot
 			for (int i = 0; i < nodes.getLength(); i++) {
 				if (nodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
 					Element currentElement = (Element) nodes.item(i);
 
-					ParkingLot newLot = new ParkingLot(i, currentElement.getElementsByTagName("lotName").item(0).getTextContent());
+					String lotName = currentElement.getElementsByTagName("lotName").item(0).getTextContent();
+					int lotId = Integer.parseInt(currentElement.getElementsByTagName("lotId").item(0).getTextContent());
+
+					ParkingLot newLot = new ParkingLot(lotId, lotName);
 
 					// For each lot section in the lot
 					for (int j = 0; j < currentElement.getElementsByTagName("lotSection").getLength(); j++) {
@@ -206,45 +212,73 @@ public class TicketManager {
 			e.printStackTrace();
 		}
 
-		 return result;
+		return result;
 	}
 
-	/*
-	 * public void saveData() { try { File fXmlFile = new File("LotStorage.xml");
-	 * DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-	 * DocumentBuilder dBuilder; dBuilder = dbFactory.newDocumentBuilder(); Document
-	 * doc = dBuilder.parse(fXmlFile); doc.getDocumentElement().normalize();
-	 * 
-	 * Element newLot = doc.createElement("lot");
-	 * 
-	 * Element root = doc.getDocumentElement();
-	 * 
-	 * Element nameElement = doc.createElement("lotName"); Element idElement =
-	 * doc.createElement("lotId"); Element rateElement =
-	 * doc.createElement("hourlyRate");
-	 * 
-	 * nameElement.appendChild(doc.createTextNode(lotName));
-	 * idElement.appendChild(doc.createTextNode("" + lotId));
-	 * rateElement.appendChild(doc.createTextNode("" + rate));
-	 * 
-	 * newLot.appendChild(nameElement); newLot.appendChild(idElement);
-	 * newLot.appendChild(rateElement);
-	 * 
-	 * root.appendChild(newLot);
-	 * 
-	 * TransformerFactory factory = TransformerFactory.newInstance(); Transformer
-	 * transformer = factory.newTransformer(); DOMSource domSource = new
-	 * DOMSource(doc);
-	 * 
-	 * transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-	 * transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount",
-	 * "2");
-	 * 
-	 * StreamResult streamResult = new StreamResult(new File("LotStorage.xml"));
-	 * transformer.transform(domSource, streamResult);
-	 * 
-	 * } catch (ParserConfigurationException | SAXException | IOException |
-	 * TransformerException e) { e.printStackTrace(); } }
-	 */
+	// Clears all data from the xml and writes all present data to it
+	public void saveData() {
+		try {
+			new PrintWriter("LotStorage.xml").close();
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.newDocument();
+
+			Element root = doc.createElement("lots");
+
+			doc.appendChild(root);
+
+			// For each parking lot
+			for (int i = 0; i < lots.size(); i++) {
+				Element newLot = doc.createElement("lot");
+
+				Element nameElement = doc.createElement("lotName");
+				Element idElement = doc.createElement("lotId");
+				Element rateElement = doc.createElement("hourlyRate");
+
+				nameElement.appendChild(doc.createTextNode(lots.get(i).getLotName()));
+				idElement.appendChild(doc.createTextNode("" + lots.get(i).getLotId()));
+				rateElement.appendChild(doc.createTextNode("" + lots.get(i).getHourlyRate()));
+
+				newLot.appendChild(nameElement);
+				newLot.appendChild(idElement);
+				newLot.appendChild(rateElement);
+
+				if (lots.get(i).getNumSections() > 0) {
+					Element lotSectionElement = doc.createElement("lotSections");
+					// For each lot section
+					for (int j = 0; j < lots.get(i).getNumSections(); j++) {
+						LotSection currentSection = lots.get(i).getAllSections().get(j);
+						Element sectionElement = doc.createElement("lotSection");
+
+						Element sectionNameElement = doc.createElement("name");
+						Element sectionTotalSpotsElement = doc.createElement("totalSpots");
+
+						sectionNameElement.appendChild(doc.createTextNode(currentSection.getName()));
+						sectionTotalSpotsElement.appendChild(doc.createTextNode("" + currentSection.getTotalSpots()));
+
+						sectionElement.appendChild(sectionNameElement);
+						sectionElement.appendChild(sectionTotalSpotsElement);
+
+						lotSectionElement.appendChild(sectionElement);
+					}
+					newLot.appendChild(lotSectionElement);
+				}
+				root.appendChild(newLot);
+			}
+
+			TransformerFactory factory = TransformerFactory.newInstance();
+			Transformer transformer = factory.newTransformer();
+			DOMSource domSource = new DOMSource(doc);
+
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+
+			StreamResult streamResult = new StreamResult(new File("LotStorage.xml"));
+			transformer.transform(domSource, streamResult);
+
+		} catch (ParserConfigurationException | TransformerException | FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 
 }

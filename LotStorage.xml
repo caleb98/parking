@@ -2,7 +2,7 @@
 <lots>
   <lot>
     <lotName>South Lot</lotName>
-    <lotId>1</lotId>
+    <lotId>0</lotId>
     <hourlyRate>100.0</hourlyRate>
     <lotSections>
       <lotSection>
@@ -10,28 +10,39 @@
         <totalSpots>200</totalSpots>
       </lotSection>
       <lotSection>
-          <name>B</name>
-          <totalSpots>300</totalSpots>
+        <name>B</name>
+        <totalSpots>300</totalSpots>
       </lotSection>
     </lotSections>
   </lot>
   <lot>
     <lotName>North Parking Deck</lotName>
-    <lotId>3</lotId>
+    <lotId>1</lotId>
     <hourlyRate>100.0</hourlyRate>
     <lotSections>
-        <lotSection>
-          <name>Level 1</name>
-          <totalSpots>400</totalSpots>
-        </lotSection>
-        <lotSection>
-            <name>Level 2</name>
-            <totalSpots>400</totalSpots>
-        </lotSection>
-        <lotSection>
-            <name>Level 3</name>
-            <totalSpots>400</totalSpots>
-        </lotSection>
-      </lotSections>
+      <lotSection>
+        <name>Level 1</name>
+        <totalSpots>400</totalSpots>
+      </lotSection>
+      <lotSection>
+        <name>Level 2</name>
+        <totalSpots>400</totalSpots>
+      </lotSection>
+      <lotSection>
+        <name>Level 3</name>
+        <totalSpots>400</totalSpots>
+      </lotSection>
+    </lotSections>
+  </lot>
+  <lot>
+    <lotName>East Lot</lotName>
+    <lotId>2</lotId>
+    <hourlyRate>100.0</hourlyRate>
+    <lotSections>
+      <lotSection>
+        <name>A</name>
+        <totalSpots>300</totalSpots>
+      </lotSection>
+    </lotSections>
   </lot>
 </lots>

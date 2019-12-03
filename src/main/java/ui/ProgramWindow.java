@@ -98,6 +98,13 @@ public class ProgramWindow {
 				}
 			}
 		});
+
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			public void run() {
+				System.out.println("Saving and exiting...");
+				ticketManager.saveData();
+			}
+		});
 		
 		//Build the lot editing panel
 		editLotsPanel.setLayout(new GridBagLayout());
@@ -795,5 +802,7 @@ public class ProgramWindow {
 		}
 		terminalSelectBox.setModel(new DefaultComboBoxModel<String>(terminals));
 	}
+
+	
 	
 }
