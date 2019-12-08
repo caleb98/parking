@@ -11,4 +11,10 @@ lot_used: South Lot
 section_used: A
 check_in: Tue Dec 03 11:41:50 CST 2019
 check_out: Tue Dec 03 11:41:59 CST 2019
-payment: $0.23866668
+payment: $0.23866668[transaction]
+transaction_id: 0
+lot_used: Test Lot
+section_used: Test Section
+check_in: Tue Dec 03 12:56:32 CST 2019
+check_out: Tue Dec 03 12:58:54 CST 2019
+payment: $3.9485834

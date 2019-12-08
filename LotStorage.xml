@@ -34,4 +34,15 @@
       </lotSection>
     </lotSections>
   </lot>
+  <lot>
+    <lotName>Test Lot</lotName>
+    <lotId>2</lotId>
+    <hourlyRate>100.0</hourlyRate>
+    <lotSections>
+      <lotSection>
+        <name>Test Section</name>
+        <totalSpots>100</totalSpots>
+      </lotSection>
+    </lotSections>
+  </lot>
 </lots>
