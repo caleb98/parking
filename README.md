@@ -1,10 +1,8 @@
-<span style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 300.50px; height: 277.68px;">![](images/image7.png)</span>
+# Parking Program
 
-<span class="c35"></span>
+This program was a project developed for CS 435 - Software Engineering at SIU, Fall 2019. The goal of the project was to create a program for a parking lot that automates customer entry, exit, and payment, and document each step of the development. Below is the final report submitted for the project, which includes this documentation as well as a description of the development process. 
 
-<a id="t.dabb4aecd141dc3cf7d33e2241143c35bab31409"></a><a id="t.0"></a>
-
-<table class="c33">
+Please excuse any formatting issues - the original report was created in Google Docs so some issues arose when exporting here.
 
 <tbody>
 
@@ -24,13 +22,11 @@
 
 <span class="c35"></span>
 
-<span class="c35">Team</span>
-
-<span class="c14">Team</span>
+<span class="c35">Team: Team</span>
 
 <span class="c14"></span>
 
-<span class="c35">Members</span>
+<span class="c35">Members:</span>
 
 <span class="c14">Alec Waichunas</span>
 
