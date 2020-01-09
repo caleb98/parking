@@ -26,21 +26,11 @@ Please excuse any formatting issues - the original report was created in Google 
 
 <span class="c14"></span>
 
-<span class="c35">Members:</span>
-
-<span class="c14">Alec Waichunas</span>
-
-<span class="c14">Caleb Cassady</span>
-
-<span class="c14">Donna St. Amour</span>
-
-<span class="c14">Frankie Fanelli</span>
+<span class="c35">Members: Alec Waichunas, Caleb Cassady, Donna St. Amour, Frankie Fanelli</span>
 
 <span class="c46"></span>
 
-<span class="c35">Date</span>
-
-<span class="c38">December 3rd, 2019</span>
+<span class="c35">Date: December 3rd, 2019</span>
 
 </td>
 
